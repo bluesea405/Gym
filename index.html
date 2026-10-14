@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#101827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="健身速记" />
+  <meta name="description" content="格子点选次数，每一列是一组，为公寓健身房定制：力量方格、有氧记录、收藏动作和训练历史。" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
+  <title>健身速记 · PocketGym 3.1</title>
+  <style>
+    :root{color-scheme:dark;--bg:#0c1220;--panel:#162033;--panel2:#1c2940;--border:#2c3b53;--soft:#9db0c7;--text:#edf4ff;--mint:#72f0ba;--mintdark:#153c31;--danger:#ff9da5;--shadow:0 16px 55px #060a1440}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 45% -30%,#203a46 0%,#0c1220 60%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft Yahei',sans-serif;font-size:15px;line-height:1.5}
+    button,input,select,textarea{font:inherit}button{cursor:pointer;-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--mint);outline-offset:2px}
+    .app{max-width:720px;margin:0 auto;padding:23px 14px 112px}.top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:17px}.brand{display:flex;align-items:center;gap:11px}.logo{height:45px;width:45px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,#74f2ba,#3dcaa8);color:#092824;font-size:22px;font-weight:900}.eyebrow{color:var(--soft);font-size:10px;font-weight:800;letter-spacing:.13em}.title{font-size:24px;line-height:1.1;font-weight:900;letter-spacing:-.04em;margin-top:4px}.storestatus{font-size:11px;color:var(--mint);background:#133c32;padding:7px 10px;border-radius:99px;white-space:nowrap}.storestatus.bad{background:#48252d;color:#ffb3bb}
+    .hero{display:flex;gap:9px;margin-bottom:16px}.hero>div{flex:1;border-radius:18px;padding:14px 16px;background:var(--panel);border:1px solid var(--border)}.hero>div:first-child{background:linear-gradient(135deg,#233b46,#19263a);border-color:#355961}.statlabel{font-size:11px;color:#adbecf}.stat{font-size:27px;font-weight:850;margin-top:2px;line-height:1.3;letter-spacing:-.04em}.stat small{font-size:12px;font-weight:500;color:#afbed0}.hero>div:first-child .stat{color:var(--mint)}.subhint{font-size:11px;color:#aabccc;margin-top:3px}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:21px;padding:17px;margin-bottom:14px;box-shadow:var(--shadow)}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}.panelhead h2{margin:0;font-size:18px}.panelhead p{margin:3px 0 0;color:var(--soft);font-size:12px}.date{border:1px solid var(--border);background:var(--panel2);color:var(--text);border-radius:10px;width:138px;max-width:50%;font-size:12px;padding:10px 7px;min-height:42px;color-scheme:dark}
+    .tiny{font-size:12px;color:var(--soft)}.chips{display:flex;overflow-x:auto;gap:8px;padding-bottom:5px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}.chip{white-space:nowrap;border:1px solid #345265;background:#203146;color:#e0edf7;border-radius:999px;padding:7px 12px;font-size:12px}.chip:active{transform:scale(.97)}
+    .field{margin-top:13px;min-width:0}.field>label{display:block;font-size:12px;color:#b9c9d9;font-weight:650;margin-bottom:6px}.field input,.field select,.field textarea{width:100%;background:#0e1929;border:1px solid #36485e;color:var(--text);min-height:46px;border-radius:12px;padding:10px 12px;outline:none;appearance:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--mint)}.field input::placeholder,.field textarea::placeholder{color:#8298ac}.field select{padding-right:30px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='15' height='15' fill='none' stroke='%239eb4ca' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpath d='m5 9 7 7 7-7'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}.field textarea{resize:vertical;min-height:72px}.twocol{display:grid;grid-template-columns:1.5fr 1fr;gap:10px}.hint{color:var(--soft);font-size:12px;margin-top:9px;min-height:19px}.hint.loaded{color:var(--mint)}
+    .table-section{margin-top:20px}.section-line{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:9px;margin-bottom:7px}.section-line h3{margin:0;font-size:15px}.set-tools{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.smallbtn{border:1px solid #395469;background:#23364a;border-radius:9px;color:#e9f7fe;padding:7px 9px;font-size:12px;font-weight:700;min-height:35px}.smallbtn.add{background:var(--mintdark);border-color:#367e65;color:var(--mint)}.smallbtn.danger{color:#ffb4ba}.table-guide{font-size:11px;color:#9db1c4;line-height:1.6;margin:0 0 10px}.table-scroll{overflow-x:auto;overflow-y:hidden;max-width:100%;border:1px solid #365066;border-radius:14px;padding:5px 3px 7px;background:#101c2c;scrollbar-color:#4d667c #101c2c;scrollbar-width:thin;overscroll-behavior-x:contain}
+    .reptable{border-collapse:separate;border-spacing:3px 3px;table-layout:fixed;width:max-content;min-width:100%;font-variant-numeric:tabular-nums}.reptable th,.reptable td{padding:0;text-align:center}.reptable .labelcell{width:58px;min-width:58px;position:sticky;left:0;z-index:2;background:#101c2c;text-align:center;color:#b8c9d9;font-size:11px;font-weight:750}.reptable thead .labelcell{z-index:4}.reptable .sethead{min-width:59px;width:64px;padding:4px 0;color:#e8f8f1;font-size:11px}.headwrap{display:flex;align-items:center;justify-content:center;gap:2px}.delset{border:0;background:transparent;color:#9aafc3;width:20px;height:25px;line-height:25px;padding:0;border-radius:5px;font-size:18px}.delset:hover,.delset:focus-visible{color:#ffb4ba;background:#45252e}
+    .reptable .weightlabel{font-weight:850;color:#d8f7e9}.reptable .weightbox{width:100%;height:41px;min-height:41px;padding:4px 3px;background:#1d2d40;border:1px solid #456074;border-radius:8px;text-align:center;appearance:textfield;color:#f0fff7;font-weight:900;font-size:16px}.weightbox::-webkit-inner-spin-button,.weightbox::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}.weightbox::placeholder{color:#71879c}.weightbox:focus{outline:2px solid var(--mint);outline-offset:0}
+    .reptable .repnum{font-size:12px;color:#b4c7da;font-weight:650}.repbtn{display:block;width:100%;height:32px;min-height:32px;padding:0;background:#1d2b40;border:1px solid #33465e;border-radius:6px;color:#70869b;font-size:13px;font-weight:700;transition:background-color .1s, border-color .1s}.repbtn.filled{background:#185747;border-color:#298966;color:#a5fbd3}.repbtn.terminal{background:var(--mint);border-color:var(--mint);color:#0c3227;font-weight:950;box-shadow:0 0 0 1px #72f0ba25}.repbtn:active{filter:brightness(1.15)}.repbtn:disabled{opacity:.4;cursor:default}.reptable tbody tr:last-child th,.reptable tbody tr:last-child td{padding-bottom:2px}.table-legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:#9db1c4;margin-top:11px}.legend-dot{display:inline-block;width:11px;height:11px;border-radius:3px;background:var(--mint);margin-right:5px;vertical-align:-1px}.summary{font-size:12px;padding:11px 12px;background:#1d2f42;border-radius:11px;margin-top:13px;color:#d7e6f2;line-height:1.7}.summary strong{color:var(--mint)}.summary .small{color:var(--soft);font-size:11px}.subactions{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px}.link{border:0;background:none;padding:0;color:var(--mint);font-size:12px;font-weight:750}.link.muted{color:#bad0de}
+    details.extra summary{font-size:12px;color:var(--soft);cursor:pointer;margin-top:14px}.actionrow{display:flex;gap:8px;margin-top:18px}.primary{flex:1;background:var(--mint);color:#08251c;border:0;border-radius:13px;min-height:50px;font-weight:850;font-size:15px}.primary:active{background:#54dca3}.secondary{border:1px solid #375065;background:#243349;color:#d6e5f8;border-radius:13px;padding:0 14px;font-weight:650}.hide{display:none!important}
+    .rows{display:grid;gap:9px}.item{background:var(--panel2);border:1px solid #2a3a50;border-radius:13px;padding:12px}.itemmain{display:flex;justify-content:space-between;gap:10px;align-items:start}.name{font-weight:800;font-size:14px}.meta{color:var(--soft);font-size:11px;margin-top:4px}.numbers{text-align:right;flex-shrink:0;color:#e5f7f0;font-size:12px;font-weight:750}.numbers strong{color:var(--mint);font-size:16px}.setsummary{font-size:12px;color:#ccdae9;margin:8px 0 0;line-height:1.7}.setsummary b{color:#edf4ff;font-weight:700}.rownotes{font-size:12px;color:#b5c7d7;margin-top:5px;white-space:pre-wrap;overflow-wrap:anywhere}.rowactions{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:10px;padding-top:9px;border-top:1px solid #32435a}.rowactions button{padding:0;border:0;background:none;color:#a9c4d5;font-size:12px;font-weight:730}.rowactions button:first-child{color:var(--mint)}.rowactions .danger{color:var(--danger)}
+    .empty{border:1px dashed #3a4a60;padding:27px 16px;border-radius:14px;text-align:center;color:#92a5ba}.empty .emoji{font-size:27px}.empty strong{display:block;color:#e2ecf5;margin-top:7px}.empty p{margin:4px 0 0;font-size:12px}.historyday{border:1px solid var(--border);border-radius:15px;margin-bottom:10px;overflow:hidden;background:var(--panel2)}.historyday summary{list-style:none;padding:13px;display:flex;justify-content:space-between;gap:8px;align-items:center;cursor:pointer}.historyday summary::-webkit-details-marker{display:none}.historyday summary .hdate{font-weight:800}.historyday summary .hstats{color:var(--soft);font-size:12px;margin-top:3px}.historyday .inner{padding:0 9px 10px}.historyday .item{background:#18253a;margin-top:7px}.historyday .arrow{color:var(--mint);font-size:20px}.historyday[open] .arrow{transform:rotate(90deg)}
+    .pageheading{font-size:22px;margin:3px 0 16px}.labelrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px}.labelrow select{border:1px solid #34455c;border-radius:9px;padding:8px;background:#0e1929;color:#e9f4fc;max-width:65%}.bars{display:flex;align-items:end;gap:7px;min-height:128px;border-bottom:1px solid #40506a;padding:12px 2px 0}.barwrap{display:flex;flex-direction:column;align-items:center;justify-content:end;flex:1;min-width:0;gap:6px}.bar{width:100%;max-width:37px;background:linear-gradient(to top,#2ba784,var(--mint));border-radius:8px 8px 0 0;min-height:3px}.barlabel{font-size:10px;color:var(--soft);text-align:center;white-space:nowrap;overflow:hidden;max-width:100%;text-overflow:ellipsis}.barvalue{font-size:11px;color:#ecf8f2;font-weight:750}.chartnote{font-size:12px;color:var(--soft);margin-top:13px}
+    .toolgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.toolbtn{border:1px solid #3b4d63;border-radius:12px;background:#223248;color:#e0ebf8;padding:13px 7px;text-align:center;font-weight:700;font-size:12px}.toolsinfo{margin-top:13px;color:var(--soft);font-size:12px}.toolsinfo strong{color:#dae7f3}
+    .nav{position:fixed;z-index:10;bottom:0;left:0;right:0;background:#0e1829ed;backdrop-filter:blur(18px);border-top:1px solid #2d3b50;padding:9px 12px max(9px,env(safe-area-inset-bottom));display:flex;justify-content:center;gap:9px}.nav button{background:transparent;border:0;color:#96aac0;min-height:48px;padding:8px 20px;border-radius:13px;font-weight:770}.nav button.active{color:#062e24;background:var(--mint)}.toast{position:fixed;bottom:90px;left:50%;transform:translate(-50%,15px);max-width:min(90vw,420px);padding:12px 18px;background:#e3ffef;color:#123526;border-radius:12px;box-shadow:0 12px 30px #0008;font-weight:730;font-size:13px;z-index:20;opacity:0;pointer-events:none;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}.foot{font-size:12px;color:#7d92aa;text-align:center;margin:12px 0 0}a{color:var(--mint)}
+    @media(min-width:680px){.app{padding-top:34px}.panel{padding:23px}.reptable .sethead{width:81px}.repbtn{height:34px}}
+    @media(max-width:370px){.app{padding:17px 10px 104px}.panel{padding:12px}.stat{font-size:24px}.reptable .sethead{min-width:56px;width:57px}.reptable .labelcell{width:52px;min-width:52px}.nav button{padding:8px 14px}.twocol{gap:7px}.field select{font-size:13px}.table-guide{font-size:10px}}
+
+    .modes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin:0 0 15px}
+    .mode{border:1px solid #40556b;background:#1b2b40;color:#adc4d8;padding:10px 5px;border-radius:12px;font-size:12px;font-weight:800;min-height:44px}
+    .mode.active{background:#1a5345;border-color:#70eabc;color:#a6ffda}
+    .chosen-head{display:flex;align-items:end;gap:8px}.chosen-head .field{flex:1}
+    .favorite-btn{height:46px;width:47px;flex-shrink:0;border:1px solid #526174;color:#a9b8c8;background:#1d3044;border-radius:12px;font-size:24px;line-height:1}
+    .favorite-btn.active{color:#ffd46e;border-color:#a38749;background:#3a3429}
+    .chip.faved{border-color:#588d76;background:#183b35;color:#cff9db}.chipslabel{margin-top:8px;margin-bottom:5px;color:#a5bdcf;font-size:11px;font-weight:700}
+    .modedesc{background:#1c2d40;color:#b7c9db;border:1px solid #324a62;font-size:12px;border-radius:12px;padding:10px 12px;margin:0 0 12px;line-height:1.5}
+    .cardio-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:7px 0 3px}
+    .cardio-fields .field{margin-top:6px}.cardio-fields .field:nth-child(3){grid-column:1/-1}
+    .cardio-title{margin:0 0 6px;font-size:15px;color:#e6faef}.cardio-note{color:#9bb3c8;font-size:12px;margin-top:8px;line-height:1.6}
+    .meta-badge{display:inline-block;font-size:10px;border:1px solid #556f80;background:#26384b;color:#e4f8ff;padding:2px 6px;border-radius:7px;margin-left:6px;vertical-align:2px}
+    .fave-empty{font-size:12px;color:#8ca6bd;white-space:nowrap;padding:8px 0}
+    @media(max-width:370px){.mode{font-size:11px}.modes{gap:5px}.cardio-fields{gap:7px}}
+
+    /* 3.1 iPhone 适配：默认四组始终整行可见；5 组及以上才横向滚动。 */
+    .table-scroll.fit-four{overflow-x:hidden}
+    .table-scroll.fit-four .reptable{
+      width:min(100%,480px);min-width:0;margin-inline:auto;
+      border-spacing:2px 3px;table-layout:fixed
+    }
+    .table-scroll.fit-four .reptable .labelcell{
+      width:44px;min-width:44px;max-width:44px;font-size:10px;white-space:nowrap
+    }
+    .table-scroll.fit-four .reptable .sethead{
+      width:auto;min-width:0;font-size:11px;white-space:nowrap
+    }
+    .table-scroll.fit-four .headwrap{gap:0;white-space:nowrap}
+    .table-scroll.fit-four .delset{flex:0 0 23px;width:23px;height:29px;line-height:29px;font-size:19px}
+    .table-scroll.fit-four .weightbox{min-width:0;padding-inline:2px;font-size:16px}
+    .table-scroll.fit-four .repbtn{min-width:0;height:34px;min-height:34px;font-size:14px}
+    @media(max-width:370px){
+      .table-scroll.fit-four .reptable .labelcell{width:41px;min-width:41px;max-width:41px;font-size:10px}
+      .table-scroll.fit-four .reptable .sethead{font-size:10px}
+      .table-scroll.fit-four .delset{flex-basis:21px;width:21px}
+      .table-scroll.fit-four .reptable{border-spacing:2px 3px}
+    }
+  </style>
+</head>
+<body>
+<main class="app">
+  <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.1</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
+  <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section>
+  <section id="page-log" class="page">
+    <div class="panel" id="form-panel"><div class="panelhead"><div><h2 id="form-title">快速记录</h2><p>力量按组点格 · 有氧记录时长和距离</p></div><input id="workout-day" class="date" type="date" aria-label="训练日期" required /></div>
+      <div class="modes" role="tablist" aria-label="动作类型">
+        <button type="button" class="mode active" data-mode="home" role="tab" aria-selected="true">🏠 我的健身房</button>
+        <button type="button" class="mode" data-mode="cardio" role="tab" aria-selected="false">♥ 有氧训练</button>
+        <button type="button" class="mode" data-mode="all" role="tab" aria-selected="false">☷ 全部动作</button>
+      </div>
+      <p class="modedesc" id="mode-description">按公寓现有器材筛选动作；部分机器型号仍待确认。</p>
+      <div class="chipslabel">★ 我的收藏 · 点动作快速载入</div><div class="chips" id="favorite-chips"></div>
+      <div class="chipslabel">⏱ 最近使用</div><div class="chips" id="recent-chips"></div>
+      <form id="record-form">
+        <div class="twocol">
+          <div class="field"><label for="exercise-pick">选择动作</label><select id="exercise-pick"><option value="">— 请选择动作 —</option></select></div>
+          <div class="field"><label for="equipment">器材类型</label><select id="equipment"><option>固定器械</option><option>哑铃</option><option>杠铃</option><option>史密斯机</option><option>绳索 / 滑轮</option><option>自重</option><option>壶铃</option><option>有氧器械</option><option>其他</option></select></div>
+        </div>
+        <div class="chosen-head"><div class="field"><label for="exercise">动作名称（可输入或搜索自定义动作）</label><input id="exercise" list="exercise-list" maxlength="65" placeholder="选择动作，或在此输入" autocomplete="off" required/><datalist id="exercise-list"></datalist></div><button type="button" id="favorite-toggle" class="favorite-btn" aria-label="收藏当前动作" title="收藏 / 取消收藏">☆</button></div>
+        <div id="previous-hint" class="hint">选择动作后，会自动载入上次保存的数据。</div>
+        <section id="cardio-section" class="hide" aria-label="有氧训练记录">
+          <h3 class="cardio-title">有氧记录</h3>
+          <div class="cardio-fields">
+            <div class="field"><label for="cardio-minutes">时长（分钟）</label><input id="cardio-minutes" type="number" step="0.5" min="0" max="1440" inputmode="decimal" placeholder="例如 20" /></div>
+            <div class="field"><label for="cardio-distance">距离（km，可选）</label><input id="cardio-distance" type="number" step="0.01" min="0" max="1000" inputmode="decimal" placeholder="例如 3.2" /></div>
+            <div class="field"><label for="cardio-resistance">阻力 / 速度 / 坡度（可选）</label><input id="cardio-resistance" maxlength="60" placeholder="例如 Level 6、8 km/h、Incline 5%" /></div>
+          </div>
+          <div class="cardio-note">有氧至少填写时长或距离。再次选择同一项目，会自动恢复上次填写的数值。</div>
+        </section>
+        <section id="strength-section" class="table-section" aria-label="每组重量及次数表格">
+          <div class="section-line"><h3>重量 × 次数表格</h3><div class="set-tools"><span id="set-count" class="tiny">4 组</span><button type="button" class="smallbtn add" id="add-set">＋ 加一组</button></div></div>
+          <p class="table-guide">每列是一组，第一行输入重量（kg）。点「10」就高亮该列 1–10 格；15 / 20 也可直接选择。点组名旁 × 删除该列。</p>
+          <div id="table-scroll" class="table-scroll" tabindex="0" aria-label="训练组记录表，超过 4 组时可横向滚动"><table class="reptable" id="reps-table"><caption class="hide">训练重量和每组次数</caption></table></div>
+          <div class="table-legend"><span><i class="legend-dot"></i>绿色 = 已选择次数</span><span>点击同一格可取消选择</span><span>1–4 组无需横滑 · 5 组以上左右滑动</span></div>
+          <div class="summary" id="table-summary">尚未选择次数</div>
+          <div class="subactions"><button type="button" id="clear-reps" class="link">清空次数（保留重量）</button><button type="button" id="copy-weight" class="link muted">首组重量 → 全部组</button><button type="button" id="reload-previous" class="link muted hide">重新载入上次</button></div>
+        </section>
+        <details class="extra" id="notes-details"><summary>＋ 训练备注（可选）</summary><div class="field"><textarea id="notes" maxlength="500" placeholder="例如：最后一组力竭；座椅第 4 档"></textarea></div></details>
+        <div class="actionrow"><button type="submit" class="primary" id="save-button">✓ 保存本次动作</button><button type="button" class="secondary hide" id="cancel-button">取消</button></div>
+      </form>
+    </div>
+    <div class="panel"><div class="panelhead"><div><h2 id="today-title">今天的训练</h2><p id="today-subtitle">选一个动作，填写重量、点格子即可开始</p></div><button id="jump-today" class="link hide" type="button">回到今天</button></div><div class="rows" id="day-list"></div></div>
+  </section>
+  <section id="page-history" class="page hide"><h2 class="pageheading">训练历史</h2><div class="panel"><div class="panelhead"><div><h2>按日期查看</h2><p>力量每组数据和有氧时长分别保留</p></div></div><div id="history-list"></div></div><div class="panel"><div class="panelhead"><div><h2>数据备份与迁移</h2><p>记录保存在本机，建议定期备份</p></div></div><div class="toolgrid"><button class="toolbtn" id="export-csv" type="button">↓ 导出 Excel / CSV</button><button class="toolbtn" id="export-json" type="button">↓ 备份 JSON</button><button class="toolbtn" id="import-json" type="button">↑ 恢复 JSON</button><button class="toolbtn" id="clear-all" type="button">清空全部记录</button></div><input id="import-file" type="file" accept=".json,application/json" class="hide"/><p class="toolsinfo"><strong>隐私：</strong>无需注册，没有数据上传。不同设备和网址的数据不自动同步；更换设备前请导出 JSON。</p></div></section>
+  <section id="page-progress" class="page hide"><h2 class="pageheading">重量进步</h2><div class="panel"><div class="panelhead"><div><h2>力量动作的训练趋势</h2><p>仅按力量训练已完成组的最高重量统计</p></div></div><div class="labelrow"><label for="chart-exercise" class="tiny">选择动作</label><select id="chart-exercise"></select></div><div id="chart-container"></div></div><div class="panel"><h2 style="margin:0 0 10px;font-size:17px">小技巧</h2><p class="tiny" style="line-height:1.9;margin:0">① 从我的健身房、收藏或全部动作中选择，自动带入上次记录。<br/>② 力量训练点方格选次数，有氧训练则输入分钟和距离。<br/>③ 收藏常练动作，直接在首页点选；再次加载可按需清空次数。<br/>④ Safari 打开在线版后用「分享 → 添加到主屏幕」。</p></div></section>
+  <p class="foot">一列一组，轻点就记 · PocketGym v3.1</p>
+</main>
+<nav class="nav" aria-label="页面导航"><button type="button" class="active" data-page="log">✎ 记录</button><button type="button" data-page="history">▤ 历史</button><button type="button" data-page="progress">↗ 趋势</button></nav>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+(()=>{'use strict';
+  // 保留 v2 的 key：升级时可继续使用本地历史，不改变旧记录。
+  const KEY='pocket_gymlog_v1', FAVORITES_KEY='pocketgym_favorites_v3';
+  const OPTIONS=[
+    ['胸部',[
+      ['坐姿推胸','固定器械','Chest Press'],['史密斯卧推','史密斯机','Smith Bench Press'],['哑铃卧推','哑铃','Dumbbell Bench Press'],['上斜哑铃卧推','哑铃','Incline Dumbbell Press'],['绳索夹胸','绳索 / 滑轮','Cable Fly'],
+      ['杠铃卧推','杠铃','Barbell Bench Press'],['蝴蝶机夹胸','固定器械','Pec Deck'],['俯卧撑','自重','Push-up']]],
+    ['背部',[
+      ['单臂哑铃划船','哑铃','One-arm Dumbbell Row'],['绳索划船','绳索 / 滑轮','Cable Row'],['跪姿绳索下拉','绳索 / 滑轮','Kneeling Cable Lat Pulldown'],['直臂下拉','绳索 / 滑轮','Straight-arm Pulldown'],
+      ['高位下拉','固定器械','Lat Pulldown · 需要专用器械'],['坐姿划船','固定器械','Seated Row · 需要专用器械'],['器械划船','固定器械','Machine Row'],['杠铃划船','杠铃','Barbell Row'],['引体向上','自重','Pull-up']]],
+    ['肩部',[
+      ['坐姿肩推','固定器械','Shoulder Press'],['哑铃肩推','哑铃','Dumbbell Shoulder Press'],['哑铃侧平举','哑铃','Lateral Raise'],['绳索侧平举','绳索 / 滑轮','Cable Lateral Raise'],['面拉','绳索 / 滑轮','Face Pull'],['反向飞鸟','固定器械','Reverse Fly']]],
+    ['腿部 / 臀部',[
+      ['腿举','固定器械','Seated Leg Press'],['史密斯深蹲','史密斯机','Smith Squat'],['哑铃罗马尼亚硬拉','哑铃','Dumbbell Romanian Deadlift'],['髋外展','固定器械','Hip Abduction'],['腿弯举','固定器械','Leg Curl · 器械待确认'],['挂片硬拉','固定器械','Plate-loaded Deadlift · 待确认'],
+      ['腿屈伸','固定器械','Leg Extension'],['深蹲','杠铃','Squat'],['罗马尼亚硬拉','杠铃','Romanian Deadlift'],['硬拉','杠铃','Deadlift'],['臀桥','杠铃','Hip Thrust'],['小腿提踵','固定器械','Calf Raise']]],
+    ['手臂',[
+      ['哑铃弯举','哑铃','Dumbbell Curl'],['锤式弯举','哑铃','Hammer Curl'],['绳索弯举','绳索 / 滑轮','Cable Curl'],['绳索下压','绳索 / 滑轮','Triceps Pushdown'],['头顶臂屈伸','哑铃','Overhead Extension'],['杠铃弯举','杠铃','Barbell Curl']]],
+    ['核心',[
+      ['平板支撑','自重','Plank'],['卷腹','自重','Crunch'],['绳索卷腹','绳索 / 滑轮','Cable Crunch'],['悬垂举腿','自重','Hanging Leg Raise']]]
+  ];
+  const CARDIO=[
+    ['跑步机','有氧器械','Treadmill'],
+    ['健身自行车','有氧器械','Stationary Bike'],
+    ['有氧划船机','有氧器械','Rowing Ergometer'],
+    ['爬楼机','有氧器械','Stair Climber'],
+    ['滑雪训练机','有氧器械','SkiErg · 待确认']
+  ];
+  const HOME=new Set([
+    '坐姿推胸','史密斯卧推','哑铃卧推','上斜哑铃卧推','绳索夹胸',
+    '单臂哑铃划船','绳索划船','跪姿绳索下拉','直臂下拉',
+    '坐姿肩推','哑铃肩推','哑铃侧平举','绳索侧平举','面拉',
+    '腿举','史密斯深蹲','哑铃罗马尼亚硬拉','髋外展','腿弯举','挂片硬拉',
+    '哑铃弯举','锤式弯举','绳索弯举','绳索下压','头顶臂屈伸','平板支撑','卷腹','绳索卷腹'
+  ]);
+  const UNCONFIRMED=new Set(['腿弯举','挂片硬拉','滑雪训练机']);
+  const DEFAULT_FAVES=['坐姿推胸','哑铃卧推','绳索划船','腿举','坐姿肩推','哑铃弯举','跑步机'];
+  const CARDIO_NAMES=new Set(CARDIO.map(x=>x[0]));
+  const OLD_ALIASES={'坐姿推胸':['Chest Press'],'高位下拉':['Lat Pulldown'],'腿举':['Leg Press'],'坐姿划船':['Cable Row'],'杠铃卧推':['卧推'],'坐姿肩推':['肩部推举'],'哑铃侧平举':['侧平举']};
+  const REP_CHOICES=[1,2,3,4,5,6,7,8,9,10,15,20];
+  const $=id=>document.getElementById(id);
+  const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+  const validDay=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(new Date(s+'T12:00:00').getTime());
+  const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const fmt=n=>Number(n).toLocaleString('zh-CN',{maximumFractionDigits:2});
+  const uid=()=>globalThis.crypto?.randomUUID?.()||('pg-'+Date.now()+'-'+Math.random().toString(36).slice(2));
+  const mkSet=(kg='',reps=null)=>({kg,reps});
+  const mkDefault=()=>Array.from({length:4},()=>mkSet());
+  const isCardio=r=>r.kind==='cardio';
+  let records=[],grid=mkDefault(),editing=null,selectedName='',currentPage='log',mode='home',kind='strength',favorites=new Set(DEFAULT_FAVES),toastTimer=0,storageOkay=true;
+  function normalizedSets(r){if(Array.isArray(r.setsData))return r.setsData.map(s=>mkSet(s.kg,s.reps));return Array.from({length:Math.max(1,Math.min(20,Number(r.sets)||1))},()=>mkSet(Number(r.kg)||0,Number(r.reps)||null))}
+  function validRecord(r){
+    if(!r||typeof r!=='object'||typeof r.id!=='string'||!validDay(r.day)||typeof r.exercise!=='string'||!r.exercise.trim())return false;
+    if(isCardio(r))return [r.durationMin,r.distanceKm].every(v=>v===''||v===null||v===undefined||(Number.isFinite(Number(v))&&Number(v)>=0&&Number(v)<=1440)) && (Number(r.durationMin)>0||Number(r.distanceKm)>0);
+    if(Array.isArray(r.setsData))return r.setsData.length>=1&&r.setsData.length<=20&&r.setsData.every(s=>s&&typeof s==='object'&&(s.kg===''||(Number.isFinite(+s.kg)&&+s.kg>=0&&+s.kg<=9999))&&(s.reps===null||Number.isInteger(s.reps)&&s.reps>=1&&s.reps<=20));
+    return Number.isFinite(+r.kg)&&Number.isFinite(+r.reps)&&Number.isFinite(+r.sets)&&+r.kg>=0&&+r.kg<=9999&&+r.reps>0&&+r.reps<=1000&&+r.sets>0&&+r.sets<=1000;
+  }
+  function norm(r){return isCardio(r)?{...r,durationMin:r.durationMin==null?'':r.durationMin,distanceKm:r.distanceKm==null?'':r.distanceKm,resistance:r.resistance||''}:{...r,setsData:normalizedSets(r),kind:'strength'}}
+  try{const parsed=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(parsed))records=parsed.filter(validRecord).map(norm)}catch(e){storageOkay=false}
+  try{const f=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'null');if(Array.isArray(f))favorites=new Set(f.filter(x=>typeof x==='string').slice(0,250))}catch(e){}
+  try{const key='__gym_probe';localStorage.setItem(key,'1');localStorage.removeItem(key)}catch(e){storageOkay=false}
+  function showStorage(){$('storage-status').textContent=storageOkay?'● 本地保存':'⚠ 保存不可用';$('storage-status').classList.toggle('bad',!storageOkay)}
+  showStorage();
+  function toast(msg){const el=$('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2700)}
+  function persist(){try{localStorage.setItem(KEY,JSON.stringify(records));storageOkay=true}catch(e){storageOkay=false;toast('保存失败，请检查浏览器存储设置')}showStorage()}
+  function saveFavorites(){try{localStorage.setItem(FAVORITES_KEY,JSON.stringify([...favorites]));storageOkay=true}catch(e){storageOkay=false;toast('收藏保存失败')}showStorage()}
+  function newest(a,b){return b.day.localeCompare(a.day)||String(b.createdAt||'').localeCompare(String(a.createdAt||''))}
+  function eqKey(name){const lowered=String(name).trim().toLocaleLowerCase();for(const [canonical,aliases] of Object.entries(OLD_ALIASES))if([canonical,...aliases].some(a=>a.toLocaleLowerCase()===lowered))return canonical.toLocaleLowerCase();return lowered}
+  function bestRecent(name){const key=eqKey(name);return [...records].sort(newest).find(r=>eqKey(r.exercise)===key&&r.id!==editing)}
+  function getDay(){return $('workout-day').value||today()}
+  function totalSets(r){return isCardio(r)?0:r.setsData.filter(s=>s.reps!==null&&s.kg!=='').length}
+  function volume(r){return isCardio(r)?0:r.setsData.reduce((v,s)=>v+(s.reps!==null&&s.kg!==''?Number(s.kg)*s.reps:0),0)}
+  function knownKind(name){return CARDIO_NAMES.has(name)?'cardio':(bestRecent(name)&&isCardio(bestRecent(name))?'cardio':null)}
+  function defaultEquipment(name){if(CARDIO_NAMES.has(name))return '有氧器械';for(const [,choices] of OPTIONS){const m=choices.find(c=>c[0]===name);if(m)return m[1]}return mode==='cardio'?'有氧器械':'固定器械'}
+  function allNames(){return new Set([...OPTIONS.flatMap(g=>g[1].map(x=>x[0])),...CARDIO.map(x=>x[0]),...records.map(r=>r.exercise),...favorites])}
+  function catalogue(){let out='<option value="">— 请选择动作 —</option>';
+    for(const [group,items] of OPTIONS){if(mode==='cardio')continue;const visible=mode==='home'?items.filter(x=>HOME.has(x[0])):items;if(!visible.length)continue;
+      out+=`<optgroup label="${esc(group)}">`+visible.map(([name,,en])=>`<option value="${esc(name)}">${esc(name)} · ${esc(en)}</option>`).join('')+'</optgroup>'}
+    if(mode==='cardio'||mode==='all')out+='<optgroup label="有氧 Cardio">'+CARDIO.map(([name,,en])=>`<option value="${esc(name)}">${esc(name)} · ${esc(en)}</option>`).join('')+'</optgroup>';
+    return out+'<option value="__custom__">＋ 自定义 / 搜索其他动作</option>';
+  }
+  function renderDatalist(){$('exercise-list').innerHTML=[...allNames()].map(name=>`<option value="${esc(name)}"></option>`).join('')}
+  function updatePicker(name){let picker=$('exercise-pick');picker.value=[...picker.options].some(o=>o.value===name)?name:(name?'__custom__':'')}
+  function redrawCatalogue(){$('exercise-pick').innerHTML=catalogue();updatePicker(selectedName)}
+  function renderChips(){let fav=[...favorites].filter(x=>x&&typeof x==='string');fav.sort((a,b)=>a.localeCompare(b,'zh-CN'));
+    $('favorite-chips').innerHTML=fav.length?fav.map(name=>`<button type="button" class="chip faved" data-choice="${esc(name)}">★ ${esc(name)}</button>`).join(''):'<span class="fave-empty">还没有收藏。先选择动作，再点右侧 ☆。</span>';
+    const recent=[],seen=new Set();for(const r of [...records].sort(newest)){const k=eqKey(r.exercise);if(!seen.has(k)){seen.add(k);recent.push(r.exercise)}if(recent.length>=7)break}
+    $('recent-chips').innerHTML=recent.length?recent.map(name=>`<button type="button" class="chip" data-choice="${esc(name)}">${esc(name)}</button>`).join(''):'<span class="fave-empty">保存第一条训练后显示最近动作。</span>';
+  }
+  function renderFavoriteToggle(){const active=favorites.has(selectedName);$('favorite-toggle').classList.toggle('active',active);$('favorite-toggle').textContent=active?'★':'☆';$('favorite-toggle').setAttribute('aria-label',active?'取消收藏当前动作':'收藏当前动作')}
+  function currentKind(){return kind}
+  function updateKind(next){kind=next;$('strength-section').classList.toggle('hide',next!=='strength');$('cardio-section').classList.toggle('hide',next!=='cardio');$('equipment').value=next==='cardio'?'有氧器械':defaultEquipment(selectedName);}
+  function switchMode(next,{clear=true}={}){
+    if(!['home','cardio','all'].includes(next))return;
+    mode=next;
+    document.querySelectorAll('[data-mode]').forEach(b=>{let active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
+    $('mode-description').textContent=mode==='home'?'🏠 只显示公寓器材能完成的力量动作；腿弯举、挂片硬拉机仍待确认。':mode==='cardio'?'♥ 跑步机、自行车、有氧划船机、爬楼机（Stair Climber）；滑雪训练机尚待确认。':'☷ 包含其他健身房的常见动作；高位下拉机、坐姿力量划船机不在你公寓。';
+    if(clear)resetForm();
+    redrawCatalogue();
+    if(!selectedName)updateKind(mode==='cardio'?'cardio':'strength');
+  }
+  function setName(name,{load=true}={}){
+    if(editing){editing=null;$('form-title').textContent='快速记录';$('save-button').textContent='✓ 保存本次动作';$('cancel-button').classList.add('hide')}
+    selectedName=String(name).trim();$('exercise').value=selectedName;updatePicker(selectedName);renderFavoriteToggle();
+    if(!selectedName){grid=mkDefault();setCardio(null);$('previous-hint').textContent='选择动作后，会自动载入上次保存的数据。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');updateKind(mode==='cardio'?'cardio':'strength')}
+    else if(load){const prev=bestRecent(selectedName);updateKind(knownKind(selectedName)|| (mode==='cardio'?'cardio':'strength'));
+      if(prev){grid=isCardio(prev)?mkDefault():normalizedSets(prev);setCardio(isCardio(prev)?prev:null);$('equipment').value=prev.equipment||defaultEquipment(selectedName);
+        $('previous-hint').textContent=`✓ 已载入 ${prev.day} 的${isCardio(prev)?'有氧数据':'重量与次数表格'}，可直接修改。`;$('previous-hint').classList.add('loaded');$('reload-previous').classList.remove('hide')}
+      else{grid=mkDefault();setCardio(null);$('previous-hint').textContent=kind==='cardio'?'首次记录此有氧项目：请输入训练时长或距离。':'首次记录此动作：默认 4 组，请填写重量并点选次数。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide')}}
+    renderTable();
+  }
+  function setCardio(r){$('cardio-minutes').value=r&&r.durationMin!==''?r.durationMin:'';$('cardio-distance').value=r&&r.distanceKm!==''?r.distanceKm:'';$('cardio-resistance').value=r?.resistance||''}
+  function renderTable(){const wrap=$('table-scroll');const scrollX=wrap.scrollLeft;wrap.classList.toggle('fit-four',grid.length<=4);$('set-count').textContent=grid.length+' 组';
+    const header=`<thead><tr><th scope="col" class="labelcell">次数 ↓</th>${grid.map((_,i)=>`<th scope="col" class="sethead"><div class="headwrap">第${i+1}组 <button type="button" class="delset" data-delete-set="${i}" aria-label="删除第${i+1}组" title="删除本组">×</button></div></th>`).join('')}</tr></thead>`;
+    const weights=`<tr><th scope="row" class="labelcell weightlabel">重量 kg</th>${grid.map((s,i)=>`<td><input class="weightbox" type="number" inputmode="decimal" min="0" max="9999" step="0.5" placeholder="kg" value="${esc(s.kg)}" data-weight="${i}" aria-label="第${i+1}组重量，千克"/></td>`).join('')}</tr>`;
+    const rows=REP_CHOICES.map(n=>`<tr><th scope="row" class="labelcell repnum">${n}</th>${grid.map((s,i)=>{const filled=s.reps!==null&&n<=s.reps,terminal=s.reps===n;return `<td><button type="button" data-rep-col="${i}" data-rep-value="${n}" aria-label="第${i+1}组 ${n} 次${terminal?'，已选':''}" aria-pressed="${terminal?'true':'false'}" class="repbtn${filled?' filled':''}${terminal?' terminal':''}">${terminal?'✓':''}</button></td>`}).join('')}</tr>`).join('');
+    $('reps-table').innerHTML=header+`<tbody>${weights}${rows}</tbody>`;wrap.scrollLeft=scrollX;updateSummary();
+  }
+  function updateSummary(){let done=0,total=0;const lines=[];for(let i=0;i<grid.length;i++){const s=grid[i];if(s.reps!==null){done++;lines.push(`${s.kg!==''?fmt(s.kg):'—'} kg × ${s.reps}`);if(s.kg!=='')total+=Number(s.kg)*s.reps}else lines.push('—')}
+    $('table-summary').innerHTML=`已选 <strong>${done}/${grid.length}</strong> 组 · 总训练量 <strong>${fmt(total)} kg</strong><div class="small">${lines.map((txt,i)=>`第${i+1}组 ${esc(txt)}`).join(' · ')}</div>`;
+  }
+  function resetForm(){editing=null;selectedName='';$('record-form').reset();$('form-title').textContent='快速记录';$('save-button').textContent='✓ 保存本次动作';$('cancel-button').classList.add('hide');$('notes-details').open=false;grid=mkDefault();setCardio(null);$('previous-hint').textContent='选择动作后，会自动载入上次保存的数据。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');updateKind(mode==='cardio'?'cardio':'strength');updatePicker('');renderFavoriteToggle();renderTable()}
+  function fillEdit(id){const r=records.find(x=>x.id===id);if(!r)return;switchPage('log');switchMode(isCardio(r)?'cardio':(HOME.has(r.exercise)?'home':'all'));
+    editing=r.id;selectedName=r.exercise;$('workout-day').value=r.day;$('exercise').value=r.exercise;updatePicker(r.exercise);updateKind(isCardio(r)?'cardio':'strength');$('equipment').value=r.equipment||defaultEquipment(r.exercise);grid=isCardio(r)?mkDefault():normalizedSets(r);setCardio(isCardio(r)?r:null);
+    $('notes').value=r.notes||'';$('notes-details').open=!!r.notes;$('previous-hint').textContent='正在修改此条已保存的训练记录。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');$('form-title').textContent='修改训练记录';$('save-button').textContent='✓ 保存修改';$('cancel-button').classList.remove('hide');renderFavoriteToggle();renderTable();renderDay();$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function numericField(id,max){const v=$(id).value.trim();if(!v)return '';const n=Number(v);return Number.isFinite(n)&&n>=0&&n<=max?n:NaN}
+  function saveRecord(e){e.preventDefault();const exercise=$('exercise').value.trim(),day=getDay(),equipment=$('equipment').value,notes=$('notes').value.trim();if(!exercise||!validDay(day)){toast('请选择日期和动作');return}
+    const existing=editing?records.find(r=>r.id===editing):null;
+    let entry={id:existing?.id||uid(),day,exercise,equipment,kind,notes,createdAt:existing?.createdAt||new Date().toISOString()};
+    if(kind==='cardio'){
+      const durationMin=numericField('cardio-minutes',1440),distanceKm=numericField('cardio-distance',1000);
+      if(Number.isNaN(durationMin)||Number.isNaN(distanceKm)){toast('时长或距离数值无效');return}
+      if(!(Number(durationMin)>0||Number(distanceKm)>0)){toast('至少输入训练时长或距离');return}
+      entry={...entry,durationMin,distanceKm,resistance:$('cardio-resistance').value.trim().slice(0,60)};
+    }else{
+      for(let i=0;i<grid.length;i++){const s=grid[i];if(s.kg!==''&&(!Number.isFinite(+s.kg)||+s.kg<0||+s.kg>9999)){toast(`第${i+1}组重量无效`);return}if(s.reps!==null&&s.kg===''){toast(`第${i+1}组已选择次数，请输入重量（自重可填 0）`);return}}
+      if(!grid.some(s=>s.reps!==null)){toast('至少点选一组次数，再保存');return}
+      entry={...entry,setsData:grid.map(s=>mkSet(s.kg===''?'':Number(s.kg),s.reps))};
+    }
+    if(editing){records=records.map(r=>r.id===editing?entry:r);toast('✓ 已更新训练记录')}
+    else{records.push(entry);toast('✓ 已记下 '+exercise)}persist();resetForm();renderAll();
+  }
+  function makeRow(r){if(isCardio(r)){const stats=[r.durationMin!==''&&r.durationMin!=null?`${fmt(r.durationMin)} 分钟`:null,r.distanceKm!==''&&r.distanceKm!=null?`${fmt(r.distanceKm)} km`:null,r.resistance?`${r.resistance}`:null].filter(Boolean).join(' · ');
+      return `<article class="item"><div class="itemmain"><div><div class="name">${esc(r.exercise)}<span class="meta-badge">有氧</span></div><div class="meta">${esc(r.equipment||'有氧器械')}</div></div><div class="numbers"><strong>${r.durationMin!==''&&r.durationMin!=null?fmt(r.durationMin):'—'}</strong> 分钟</div></div><div class="setsummary">${esc(stats)}</div>${r.notes?`<div class="rownotes">${esc(r.notes)}</div>`:''}${rowActions(r.id)}</article>`;
+    }
+    const s=normalizedSets(r),completed=s.filter(x=>x.reps!==null&&x.kg!=='');const details=s.map((x,i)=>`<b>${i+1}</b> ${x.kg===''?'—':fmt(x.kg)} kg × ${x.reps??'—'}`).join(' <span style="color:#6d87a1">·</span> ');
+    return `<article class="item"><div class="itemmain"><div><div class="name">${esc(r.exercise)}</div><div class="meta">${esc(r.equipment||'其他')}</div></div><div class="numbers"><strong>${completed.length}</strong> / ${s.length} 组<br/><span style="color:#aec6d6;font-weight:500">${fmt(volume(r))} kg 训练量</span></div></div><div class="setsummary">${details}</div>${r.notes?`<div class="rownotes">${esc(r.notes)}</div>`:''}${rowActions(r.id)}</article>`;
+  }
+  function rowActions(id){return `<div class="rowactions"><button type="button" data-action="repeat" data-id="${esc(id)}">↻ 复用</button><button type="button" data-action="edit" data-id="${esc(id)}">编辑记录</button><button type="button" class="danger" data-action="delete" data-id="${esc(id)}">删除</button></div>`}
+  function daySummary(rs){return `${new Set(rs.map(r=>eqKey(r.exercise))).size} 个动作 · ${rs.reduce((n,r)=>n+totalSets(r),0)} 组力量 · ${rs.filter(isCardio).length} 项有氧`}
+  function renderDay(){const day=getDay(),rows=records.filter(r=>r.day===day).sort(newest);$('today-title').textContent=day===today()?'今天的训练':'训练：'+day;
+    $('today-subtitle').textContent=rows.length?`${daySummary(rows)} · ${fmt(rows.reduce((v,r)=>v+volume(r),0))} kg 力量训练量`:'选一个动作，点力量方格或填写有氧时间即可开始';$('jump-today').classList.toggle('hide',day===today());$('day-list').innerHTML=rows.length?rows.map(makeRow).join(''):'<div class="empty"><div class="emoji">🏋️</div><strong>还没有训练记录</strong><p>从「我的健身房」或「有氧训练」中选择动作。</p></div>'}
+  function renderStats(){const now=new Date(),dow=(now.getDay()+6)%7,mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-dow),monday=mon.getFullYear()+'-'+String(mon.getMonth()+1).padStart(2,'0')+'-'+String(mon.getDate()).padStart(2,'0');const days=new Set(records.filter(r=>r.day>=monday&&r.day<=today()).map(r=>r.day));$('week-stat').innerHTML=days.size+' <small>天</small>';$('all-stat').innerHTML=records.reduce((sum,r)=>sum+totalSets(r),0)+' <small>组</small>'}
+  function renderHistory(){const groups=new Map();for(const r of [...records].sort(newest)){if(!groups.has(r.day))groups.set(r.day,[]);groups.get(r.day).push(r)}
+    $('history-list').innerHTML=groups.size?[...groups.entries()].map(([day,rs],i)=>`<details class="historyday" ${i===0?'open':''}><summary><div><div class="hdate">${esc(day)}${day===today()?' · 今天':''}</div><div class="hstats">${daySummary(rs)}</div></div><span class="arrow">›</span></summary><div class="inner">${rs.map(makeRow).join('')}</div></details>`).join(''):'<div class="empty"><div class="emoji">📅</div><strong>历史还是空的</strong><p>保存第一项训练后会显示在这里。</p></div>'}
+  function renderProgress(){const prev=$('chart-exercise').value,rs=records.filter(r=>!isCardio(r)),names=[...new Set(rs.map(r=>r.exercise))].sort((a,b)=>a.localeCompare(b,'zh-CN'));
+    $('chart-exercise').innerHTML=names.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`).join('');if(names.includes(prev))$('chart-exercise').value=prev;else if(rs.length)$('chart-exercise').value=[...rs].sort(newest)[0].exercise;renderChart()}
+  function renderChart(){const name=$('chart-exercise').value,container=$('chart-container');if(!name){container.innerHTML='<div class="empty"><div class="emoji">📈</div><strong>暂无重量趋势</strong><p>先保存一条力量训练记录。</p></div>';return}
+    const dayMap=new Map();for(const r of records.filter(x=>!isCardio(x)&&x.exercise===name)){const max=Math.max(0,...r.setsData.filter(s=>s.reps!==null&&s.kg!=='').map(s=>Number(s.kg)));dayMap.set(r.day,Math.max(dayMap.get(r.day)||0,max))}
+    const days=[...dayMap.entries()].sort((a,b)=>a[0].localeCompare(b[0])).slice(-9),max=Math.max(1,...days.map(x=>x[1]));
+    container.innerHTML=`<div class="bars" role="img" aria-label="最高训练重量按天统计">${days.map(([d,n])=>`<div class="barwrap"><div class="barvalue">${fmt(n)}</div><div class="bar" style="height:${Math.max(3,Math.round(n/max*98))}px"></div><div class="barlabel">${esc(d.slice(5))}</div></div>`).join('')}</div><div class="chartnote">共 ${days.length} 个训练日 · 最近一次最高重量 <strong style="color:var(--mint)">${fmt(days[days.length-1][1])} kg</strong></div>`;
+  }
+  function renderAll(){renderDatalist();renderChips();renderDay();renderStats();if(currentPage==='history')renderHistory();if(currentPage==='progress')renderProgress()}
+  function switchPage(page){if(!['log','history','progress'].includes(page))return;currentPage=page;for(const p of ['log','history','progress'])$('page-'+p).classList.toggle('hide',p!==page);document.querySelectorAll('.nav button').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false')});if(page==='history')renderHistory();if(page==='progress')renderProgress();window.scrollTo({top:0,behavior:'instant'})}
+  function download(name,body,type){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500)}
+  function csvExport(){const header=['日期','类型','动作','器材类型','第几组','重量(kg)','次数','训练量(kg)','时长(分钟)','距离(km)','阻力/速度/坡度','备注'];const data=[header];
+    for(const r of [...records].sort((a,b)=>a.day.localeCompare(b.day))){if(isCardio(r))data.push([r.day,'有氧',r.exercise,r.equipment,'','','','',r.durationMin,r.distanceKm,r.resistance||'',r.notes||'']);else for(const [i,s] of r.setsData.entries())data.push([r.day,'力量',r.exercise,r.equipment,i+1,s.kg,s.reps??'',s.reps!==null&&s.kg!==''?Number(s.kg)*s.reps:'','','','',r.notes||''])}
+    const csv='\ufeff'+data.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download('健身记录_力量与有氧_'+today()+'.csv',csv,'text/csv;charset=utf-8');toast('CSV 已导出')}
+  function jsonExport(){download('健身速记_备份_'+today()+'.json',JSON.stringify({app:'PocketGym',version:3,exportedAt:new Date().toISOString(),records,favorites:[...favorites]},null,2),'application/json;charset=utf-8');toast('JSON 已备份（含收藏）')}
+  async function importFile(e){const file=e.target.files?.[0];e.target.value='';if(!file)return;try{const obj=JSON.parse(await file.text()),incoming=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(incoming)||!incoming.every(validRecord))throw Error('不是可识别的健身记录文件');if(!confirm(`导入 ${incoming.length} 条记录，与现有 ${records.length} 条合并？同 ID 记录以导入版本为准。`))return;
+      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
+  function chooseAndLoad(name){const cardio=knownKind(name)==='cardio';if(cardio&&mode!=='cardio'&&mode!=='all')switchMode('cardio');else if(!cardio&&mode==='cardio')switchMode(HOME.has(name)?'home':'all');setName(name)}
+  function rowAction(e){const b=e.target.closest('button[data-action]');if(!b)return;const id=b.dataset.id,action=b.dataset.action,r=records.find(r=>r.id===id);if(!r)return;
+    if(action==='edit'){fillEdit(id);return}if(action==='repeat'){switchPage('log');$('workout-day').value=today();chooseAndLoad(r.exercise);$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return}
+    if(action==='delete'){if(!confirm(`删除「${r.exercise}」这条训练（${r.day}），确定吗？`))return;records=records.filter(x=>x.id!==id);if(editing===id)resetForm();persist();renderAll();toast('已删除')}
+  }
+  $('workout-day').value=today();redrawCatalogue();
+  document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.mode)));
+  $('exercise-pick').addEventListener('change',()=>{const name=$('exercise-pick').value;if(name==='__custom__'){setName('');$('previous-hint').textContent='请输入新动作名称，或从历史记录中选择。';$('exercise').focus()}else setName(name)});
+  $('exercise').addEventListener('input',()=>{const name=$('exercise').value.trim();if(name===selectedName)return;if(!name){setName('');return}if(allNames().has(name))setName(name);else{selectedName=name;updatePicker(name);grid=mkDefault();setCardio(null);updateKind(mode==='cardio'?'cardio':'strength');$('previous-hint').textContent=kind==='cardio'?'新有氧项目：请输入时长或距离。':'新动作：默认 4 组。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');renderFavoriteToggle();renderTable()}});
+  ['favorite-chips','recent-chips'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.target.closest('[data-choice]');if(b)chooseAndLoad(b.dataset.choice)}));
+  $('favorite-toggle').addEventListener('click',()=>{const name=$('exercise').value.trim();if(!name){toast('请先选择或输入动作');return}if(favorites.has(name)){favorites.delete(name);toast('已取消收藏')}else{favorites.add(name);toast('★ 已加入收藏')}selectedName=name;renderFavoriteToggle();saveFavorites();renderDatalist();renderChips()});
+  $('reps-table').addEventListener('click',e=>{const del=e.target.closest('[data-delete-set]');if(del){if(grid.length<=1){toast('至少保留 1 组');return}grid.splice(Number(del.dataset.deleteSet),1);renderTable();return}const rep=e.target.closest('[data-rep-col]');if(rep){const i=Number(rep.dataset.repCol),n=Number(rep.dataset.repValue);grid[i].reps=grid[i].reps===n?null:n;renderTable()}});
+  $('reps-table').addEventListener('input',e=>{const el=e.target.closest('[data-weight]');if(!el)return;grid[Number(el.dataset.weight)].kg=el.value===''?'':Number(el.value);updateSummary()});
+  $('reps-table').addEventListener('change',e=>{const el=e.target.closest('[data-weight]');if(!el)return;const i=Number(el.dataset.weight),s=grid[i];if(s.kg!==''&&(!Number.isFinite(+s.kg)||+s.kg<0||+s.kg>9999)){toast('重量范围为 0–9999 kg');el.focus();return}if(i===0&&s.kg!==''&&grid.slice(1).every(s=>s.kg===''))for(let j=1;j<grid.length;j++)grid[j].kg=s.kg;renderTable()});
+  $('add-set').addEventListener('click',()=>{if(grid.length>=20){toast('最多支持 20 组');return}grid.push(mkSet(grid.length?grid[grid.length-1].kg:'',null));renderTable();$('table-scroll').scrollLeft=$('table-scroll').scrollWidth;toast('已添加第 '+grid.length+' 组')});
+  $('clear-reps').addEventListener('click',()=>{if(!grid.some(s=>s.reps!==null)){toast('次数已经是空的');return}grid.forEach(s=>s.reps=null);renderTable();toast('已清空次数，重量不变')});
+  $('copy-weight').addEventListener('click',()=>{if(grid[0].kg===''||!Number.isFinite(+grid[0].kg)){toast('请先填写第 1 组重量');return}grid.forEach(s=>s.kg=grid[0].kg);renderTable();toast('已复制首组重量')});
+  $('reload-previous').addEventListener('click',()=>{const name=$('exercise').value.trim();if(!name)return;setName(name);toast('已重新载入上次数据')});
+  $('record-form').addEventListener('submit',saveRecord);$('cancel-button').addEventListener('click',resetForm);$('workout-day').addEventListener('change',renderDay);$('jump-today').addEventListener('click',()=>{$('workout-day').value=today();renderDay()});
+  document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
+  $('day-list').addEventListener('click',rowAction);$('history-list').addEventListener('click',rowAction);$('chart-exercise').addEventListener('change',renderChart);
+  $('export-csv').addEventListener('click',csvExport);$('export-json').addEventListener('click',jsonExport);$('import-json').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',importFile);
+  $('clear-all').addEventListener('click',()=>{if(!records.length){toast('没有可以清空的记录');return}if(!confirm(`将永久清空 ${records.length} 条训练记录。建议先备份 JSON。确定吗？`))return;records=[];persist();resetForm();renderAll();toast('已清空全部记录')});
+  switchMode('home');renderTable();renderAll();
+  if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+})();
+</script>
+</body>
+</html>
