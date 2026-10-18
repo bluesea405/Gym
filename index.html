@@ -373,6 +373,7 @@
       planState=restored;
       // Snapshot freezes in-progress sessions even when the template changes.
       planState.snapshot=cleanedTemplate(restored.snapshot)||JSON.parse(JSON.stringify(PLANS[restored.id]));
+      if(!restored.snapshot)savePlan(); // migrate v3.3 session before templates can change
     }
   }catch(e){}
   function savePlan(){try{if(planState)localStorage.setItem(PLAN_KEY,JSON.stringify(planState));else localStorage.removeItem(PLAN_KEY)}catch(e){toast('训练计划进度保存失败')}}
