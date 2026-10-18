@@ -234,6 +234,37 @@
       ['髋外展',2,'12–15','60–90 秒']
     ]}
   };
+
+  // v3.4 editable plan templates: built-in plans remain defaults, user changes are separate.
+  const DEFAULT_PLANS=JSON.parse(JSON.stringify(PLANS));
+  const TEMPLATES_KEY='pocketgym_templates_v34';
+  let customTemplates={};
+  function cleanedTemplate(t){
+    if(!t||typeof t!=='object'||typeof t.title!=='string'||!t.title.trim()
+      ||typeof t.focus!=='string'||!Array.isArray(t.items)||t.items.length<1||t.items.length>20)return null;
+    const items=[];
+    for(const row of t.items){
+      if(!Array.isArray(row)||row.length<4||typeof row[0]!=='string'||!row[0].trim()
+        ||!Number.isInteger(Number(row[1]))||Number(row[1])<1||Number(row[1])>20
+        ||typeof row[2]!=='string'||typeof row[3]!=='string')return null;
+      items.push([row[0].trim().slice(0,65),Number(row[1]),row[2].trim().slice(0,28)||'8–12',row[3].trim().slice(0,28)||'60–90 秒']);
+    }
+    return {title:t.title.trim().slice(0,60),focus:t.focus.trim().slice(0,130),items};
+  }
+  try {
+    const saved=JSON.parse(localStorage.getItem(TEMPLATES_KEY)||'{}');
+    if(saved&&typeof saved==='object'&&!Array.isArray(saved))
+      for(const [key,value] of Object.entries(saved).slice(0,40))
+        if((Object.hasOwn(DEFAULT_PLANS,key)||/^custom-[a-z0-9-]{6,45}$/.test(key))&&cleanedTemplate(value)){
+          customTemplates[key]=cleanedTemplate(value);PLANS[key]=customTemplates[key];
+        }
+  }catch(e){}
+  function persistTemplates(){
+    try{localStorage.setItem(TEMPLATES_KEY,JSON.stringify(customTemplates))}
+    catch(e){toast('模板保存失败：请检查本地存储')}
+  }
+  function activePlan(){return planState?.snapshot||PLANS[planState?.id]||null}
+  let editingTemplateId='upperA',draftTemplate=null;
   const PLAN_KEY='pocketgym_active_plan_v33';
   const REP_CHOICES=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,20];
   const $=id=>document.getElementById(id);
@@ -258,13 +289,22 @@
   try{const f=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'null');if(Array.isArray(f))favorites=new Set(f.filter(x=>typeof x==='string').slice(0,250))}catch(e){}
 
   function validPlanState(state){
-    if(!state||typeof state!=='object'||!Object.hasOwn(PLANS,state.id)||!validDay(state.day)||!Number.isInteger(state.index))return false;
-    const count=PLANS[state.id].items.length;
+    if(!state||typeof state!=='object'||!validDay(state.day)||!Number.isInteger(state.index))return false;
+    const template=cleanedTemplate(state.snapshot)||PLANS[state.id];
+    if(!template)return false;
+    const count=template.items.length;
     return state.index>=0&&state.index<=count&&state.done&&typeof state.done==='object'&&!Array.isArray(state.done)
-      &&Object.keys(state.done).every(k=>/^(0|[1-9]\d*)$/.test(k)&&Number(k)<count&&typeof state.done[k]==='string')
+      &&Object.keys(state.done).every(k=>/^(0|[1-9]\\d*)$/.test(k)&&Number(k)<count&&typeof state.done[k]==='string')
       &&Array.isArray(state.skipped)&&state.skipped.every(i=>Number.isInteger(i)&&i>=0&&i<count);
   }
-  try{const restored=JSON.parse(localStorage.getItem(PLAN_KEY)||'null');if(validPlanState(restored))planState=restored}catch(e){}
+  try{
+    const restored=JSON.parse(localStorage.getItem(PLAN_KEY)||'null');
+    if(validPlanState(restored)){
+      planState=restored;
+      // Snapshot freezes in-progress sessions even when the template changes.
+      planState.snapshot=cleanedTemplate(restored.snapshot)||JSON.parse(JSON.stringify(PLANS[restored.id]));
+    }
+  }catch(e){}
   function savePlan(){try{if(planState)localStorage.setItem(PLAN_KEY,JSON.stringify(planState));else localStorage.removeItem(PLAN_KEY)}catch(e){toast('训练计划进度保存失败')}}
   try{const key='__gym_probe';localStorage.setItem(key,'1');localStorage.removeItem(key)}catch(e){storageOkay=false}
   function showStorage(){$('storage-status').textContent=storageOkay?'● 本地保存':'⚠ 保存不可用';$('storage-status').classList.toggle('bad',!storageOkay)}
@@ -334,7 +374,7 @@
   }
   function numericField(id,max){const v=$(id).value.trim();if(!v)return '';const n=Number(v);return Number.isFinite(n)&&n>=0&&n<=max?n:NaN}
   function saveRecord(e){e.preventDefault();const exercise=$('exercise').value.trim(),day=getDay(),equipment=$('equipment').value,notes=$('notes').value.trim();if(!exercise||!validDay(day)){toast('请选择日期和动作');return}
-    const plan=planState&&PLANS[planState.id],step=plan?.items[planState.index];
+    const plan=planState&&activePlan(),step=plan?.items[planState.index];
     const planMatch=!editing&&!!step&&exercise===step[0]&&day===planState.day;
     const planSavedId=planMatch?planState.done[planState.index]:null;
     const existing=records.find(r=>r.id===(editing||planSavedId))||null;
@@ -368,20 +408,23 @@
 
   function nextPlanIndex(from){
     if(!planState)return 0;
-    const count=PLANS[planState.id].items.length;
+    const count=activePlan().items.length;
     for(let i=from;i<count;i++)if(!planState.done[i]&&!planState.skipped.includes(i))return i;
     for(let i=0;i<from&&i<count;i++)if(!planState.done[i]&&!planState.skipped.includes(i))return i;
     return count;
   }
   function renderPlan(){
     const picker=$('plan-picker');if(!picker)return;
-    const id=planState?.id||picker.value||'upperA';
-    if(!picker.options.length)picker.innerHTML=Object.entries(PLANS).map(([k,v])=>`<option value="${k}">${v.title}</option>`).join('');
-    if(Object.hasOwn(PLANS,id))picker.value=id;
-    const selected=PLANS[picker.value],running=!!planState;
+    const target=planState?.id||picker.value||'upperA';
+    let entries=Object.entries(PLANS);
+    if(planState&&!Object.hasOwn(PLANS,target))entries=[...entries,[target,activePlan()]];
+    if(picker.options.length!==entries.length||entries.some(([key,val],i)=>picker.options[i]?.value!==key||picker.options[i]?.text!==val.title))
+      picker.innerHTML=entries.map(([k,v])=>`<option value="${esc(k)}">${esc(v.title)}</option>`).join('');
+    picker.value=Object.hasOwn(PLANS,target)||planState?target:'upperA';
+    const selected=planState?activePlan():PLANS[picker.value],running=!!planState;
     picker.disabled=running;
     $('plan-start').textContent=running?'继续训练':'开始训练';
-    $('plan-meta').textContent=selected.focus+' · 按顺序点击保存并下一步；上一重量会自动带入（次数清空）。';
+    $('plan-meta').textContent=selected.focus+' · '+selected.items.length+' 个动作';
     $('plan-active-summary').classList.toggle('hide',!running);
     $('plan-footer').classList.toggle('hide',!running);
     let steps=selected.items,finished=0;
@@ -389,23 +432,27 @@
       finished=steps.filter((_,i)=>planState.done[i]||planState.skipped.includes(i)).length;
       const complete=planState.index>=steps.length;
       $('plan-progress-label').textContent=complete?'🎉 本轮训练已完成':`进行中 · ${finished}/${steps.length} 项`;
-      $('plan-progress-detail').textContent=complete?'所有动作已保存或跳过。点击“结束本次计划”返回普通记录。':`训练日期 ${planState.day} · 当前：第 ${planState.index+1} 项 ${steps[planState.index][0]}`;
+      $('plan-progress-detail').textContent=complete?'所有动作已保存或跳过。点击“结束本次计划”返回普通记录。':`当前：${steps[planState.index][0]} · ${steps[planState.index][1]} 组 × ${steps[planState.index][2]} 次`;
       $('plan-progress-bar').style.width=Math.round(finished/steps.length*100)+'%';
       $('plan-prev').disabled=planState.index===0;
       $('plan-skip').disabled=complete;
       $('plan-return').disabled=complete;
     }
     $('plan-steps').classList.toggle('active',running);
+    $('plan-step-count').textContent=steps.length;
     $('plan-steps').innerHTML=steps.map(([name,sets,reps,rest],i)=>{
       const done=!!planState?.done[i],skipped=!!planState?.skipped.includes(i),current=running&&planState.index===i;
       return `<button type="button" class="plan-step${done?' done':''}${current?' current':''}" data-plan-step="${i}" ${running?'':'disabled'} aria-current="${current?'step':'false'}"><span class="plan-number">${done?'✓':skipped?'↷':i+1}</span><span class="plan-main"><b>${esc(name)}</b><small>${sets} 组 × ${esc(reps)} 次 · 休息 ${esc(rest)}${skipped?' · 已跳过':''}</small></span>${current?'<span style="font-size:11px;color:#b6ffe0">当前</span>':''}</button>`;
     }).join('');
-    const currentStep=running?steps[planState.index]:null;
-    if(!editing)$('save-button').textContent=currentStep&&selectedName===currentStep[0]&&getDay()===planState.day?'✓ 保存并下一步':'✓ 保存本次动作';
+    const step=running?steps[planState.index]:null;
+    if(!editing)$('save-button').textContent=step&&selectedName===step[0]&&getDay()===planState.day?'✓ 保存并下一步':'✓ 保存本次动作';
+    $('exercise-preview').textContent=selectedName?selectedName:(running?'使用计划动作':'点击选择或更换动作');
+    $('form-title').textContent=editing?'修改训练记录':step&&selectedName===step[0]?'第 '+(planState.index+1)+' 项 · '+step[0]:'快速记录';
+    $('form-panel').classList.toggle('guided-form',!!step&&selectedName===step[0]&&!editing);
   }
   function loadPlanStep(){
     if(!planState)return;
-    const plan=PLANS[planState.id],i=planState.index;
+    const plan=activePlan(),i=planState.index;
     if(i>=plan.items.length){resetForm();renderPlan();return;}
     const [name,numSets]=plan.items[i];
     $('workout-day').value=planState.day;
@@ -423,20 +470,20 @@
   function startPlan(){
     if(planState){switchPage('log');loadPlanStep();$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return;}
     const id=$('plan-picker').value;
-    planState={id,day:getDay(),index:0,done:{},skipped:[]};
+    planState={id,day:getDay(),index:0,done:{},skipped:[],snapshot:JSON.parse(JSON.stringify(PLANS[id]))};
     savePlan();loadPlanStep();renderPlan();
     $('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
     toast('开始 '+PLANS[id].title+' · 第 1 项 '+PLANS[id].items[0][0]);
   }
   function gotoPlanStep(i){
     if(!planState)return;
-    if(!Number.isInteger(i)||i<0||i>=PLANS[planState.id].items.length)return;
+    if(!Number.isInteger(i)||i<0||i>=activePlan().items.length)return;
     planState.index=i;savePlan();loadPlanStep();
     $('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
   }
   function skipPlanStep(){
     if(!planState)return;
-    const i=planState.index,steps=PLANS[planState.id].items;
+    const i=planState.index,steps=activePlan().items;
     if(i>=steps.length)return;
     if(!planState.done[i]&&!planState.skipped.includes(i))planState.skipped.push(i);
     planState.index=nextPlanIndex(i+1);
@@ -446,7 +493,7 @@
   function endPlan(){
     if(!planState)return;
     const done=Object.keys(planState.done).length;
-    if(done<PLANS[planState.id].items.length&&!confirm('结束当前计划？已保存的训练记录会保留，但计划进度将清除。'))return;
+    if(done<activePlan().items.length&&!confirm('结束当前计划？已保存的训练记录会保留，但计划进度将清除。'))return;
     planState=null;savePlan();resetForm();renderPlan();toast('计划已结束，训练记录已保留');
   }
   function makeRow(r){if(isCardio(r)){const stats=[r.durationMin!==''&&r.durationMin!=null?`${fmt(r.durationMin)} 分钟`:null,r.distanceKm!==''&&r.distanceKm!=null?`${fmt(r.distanceKm)} km`:null,r.resistance?`${r.resistance}`:null].filter(Boolean).join(' · ');
@@ -477,7 +524,7 @@
     const csv='\ufeff'+data.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download('健身记录_力量与有氧_'+today()+'.csv',csv,'text/csv;charset=utf-8');toast('CSV 已导出')}
   function jsonExport(){download('健身速记_备份_'+today()+'.json',JSON.stringify({app:'PocketGym',version:3,exportedAt:new Date().toISOString(),records,favorites:[...favorites],activePlan:planState},null,2),'application/json;charset=utf-8');toast('JSON 已备份（含收藏）')}
   async function importFile(e){const file=e.target.files?.[0];e.target.value='';if(!file)return;try{const obj=JSON.parse(await file.text()),incoming=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(incoming)||!incoming.every(validRecord))throw Error('不是可识别的健身记录文件');if(!confirm(`导入 ${incoming.length} 条记录，与现有 ${records.length} 条合并？同 ID 记录以导入版本为准。`))return;
-      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}if(validPlanState(obj.activePlan)){planState=obj.activePlan;savePlan();renderPlan()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
+      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}if(validPlanState(obj.activePlan)){planState={...obj.activePlan,snapshot:cleanedTemplate(obj.activePlan.snapshot)||JSON.parse(JSON.stringify(PLANS[obj.activePlan.id]))};savePlan();renderPlan()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
   function chooseAndLoad(name){const cardio=knownKind(name)==='cardio';if(cardio&&mode!=='cardio'&&mode!=='all')switchMode('cardio');else if(!cardio&&mode==='cardio')switchMode(HOME.has(name)?'home':'all');setName(name)}
   function rowAction(e){const b=e.target.closest('button[data-action]');if(!b)return;const id=b.dataset.id,action=b.dataset.action,r=records.find(r=>r.id===id);if(!r)return;
     if(action==='edit'){fillEdit(id);return}if(action==='repeat'){switchPage('log');$('workout-day').value=today();chooseAndLoad(r.exercise);$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return}
@@ -509,7 +556,7 @@
   $('export-csv').addEventListener('click',csvExport);$('export-json').addEventListener('click',jsonExport);$('import-json').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',importFile);
   $('clear-all').addEventListener('click',()=>{if(!records.length){toast('没有可以清空的记录');return}if(!confirm(`将永久清空 ${records.length} 条训练记录。建议先备份 JSON。确定吗？`))return;records=[];persist();resetForm();renderAll();toast('已清空全部记录')});
   switchMode('home');renderTable();renderAll();renderPlan();
-  if(planState&&planState.index<PLANS[planState.id].items.length)loadPlanStep();
+  if(planState&&planState.index<activePlan().items.length)loadPlanStep();
   if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
 </script>
