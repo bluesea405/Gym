@@ -357,7 +357,7 @@
     if(!template)return false;
     const count=template.items.length;
     return state.index>=0&&state.index<=count&&state.done&&typeof state.done==='object'&&!Array.isArray(state.done)
-      &&Object.keys(state.done).every(k=>/^(0|[1-9]\\d*)$/.test(k)&&Number(k)<count&&typeof state.done[k]==='string')
+      &&Object.keys(state.done).every(k=>/^(0|[1-9]\d*)$/.test(k)&&Number(k)<count&&typeof state.done[k]==='string')
       &&Array.isArray(state.skipped)&&state.skipped.every(i=>Number.isInteger(i)&&i>=0&&i<count);
   }
   try{
