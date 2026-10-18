@@ -1,13 +1,13 @@
 {
-  "name": "健身速记 · PocketGym 3.4",
+  "name": "健身速记 · PocketGym 3.5",
   "short_name": "健身速记",
-  "description": "为手机优化的四组免横滑力量方格、有氧记录与收藏动作",
+  "description": "简洁的 iOS 风格训练记录，保留每组重量 × 次数方格、训练计划与历史",
   "lang": "zh-CN",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#0c1220",
-  "theme_color": "#101827",
+  "background_color": "#f2f2f7",
+  "theme_color": "#f2f2f7",
   "icons": [
     {
       "src": "icon-192.png",
