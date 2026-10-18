@@ -72,7 +72,12 @@
     }
 
 
-    /* v3.4 compact mobile dashboard and progressive disclosure */
+    /* Mobile floating save action: available while entering any planned exercise. */
+    body.plan-session .app{padding-bottom:172px}
+    .quick-save{position:fixed;bottom:calc(72px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(100% - 22px,688px);z-index:12;padding:6px;border-radius:16px;border:1px solid #317d61;background:#10271ff2;box-shadow:0 8px 32px #0009;backdrop-filter:blur(12px)}
+    .quick-save button{width:100%;height:47px;border:0;border-radius:11px;background:var(--mint);color:#09271e;font-weight:900;font-size:15px}
+    .quick-save button:active{filter:brightness(.9)}
+        /* v3.4 compact mobile dashboard and progressive disclosure */
     .app{padding-top:16px}.top{margin-bottom:11px}.brand .logo{width:39px;height:39px;border-radius:12px}.title{font-size:21px}
     .panel{padding:15px;margin-bottom:10px;border-radius:17px}.panelhead{margin-bottom:9px}.panelhead p{font-size:11px}
     .compact-details{border:1px solid #344a60;border-radius:14px;background:#172538;margin:8px 0 10px;overflow:hidden}
@@ -150,7 +155,7 @@
   <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.4</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
 
   <section id="page-log" class="page">
-    <details class="compact-details stats-fold" id="stats-fold"><summary>📊 训练统计 <span class="detail-hint">本周天数 · 累计组数</span></summary>  <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section></details>
+
 
     <section class="panel plan-panel" id="plan-panel" aria-label="训练计划">
       <div class="panelhead"><div><h2>🗓️ 按计划训练</h2><p>选一天的训练 → 逐项打卡，保存自动进入下一项</p></div></div>
@@ -177,6 +182,7 @@
         </div>
       </details>
     </section>
+    <details class="compact-details stats-fold" id="stats-fold"><summary>📊 训练统计 <span class="detail-hint">本周天数 · 累计组数</span></summary>  <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section></details>
     <div class="panel" id="form-panel"><div class="panelhead"><div><h2 id="form-title">快速记录</h2><p>力量按组点格 · 有氧记录时长和距离</p></div><input id="workout-day" class="date" type="date" aria-label="训练日期" required /></div>
       <form id="record-form"><details id="exercise-controls" class="compact-details manual-tools" open><summary>🔎 选择 / 更换动作 <span class="detail-hint" id="exercise-preview">点击选择动作</span></summary><div class="modes" role="tablist" aria-label="动作类型">
         <button type="button" class="mode active" data-mode="home" role="tab" aria-selected="true">🏠 我的健身房</button>
@@ -227,6 +233,7 @@
   <section id="page-progress" class="page hide"><h2 class="pageheading">重量进步</h2><div class="panel"><div class="panelhead"><div><h2>力量动作的训练趋势</h2><p>仅按力量训练已完成组的最高重量统计</p></div></div><div class="labelrow"><label for="chart-exercise" class="tiny">选择动作</label><select id="chart-exercise"></select></div><div id="chart-container"></div></div><div class="panel"><h2 style="margin:0 0 10px;font-size:17px">小技巧</h2><p class="tiny" style="line-height:1.9;margin:0">① 从我的健身房、收藏或全部动作中选择，自动带入上次记录。<br/>② 力量训练点方格选次数，有氧训练则输入分钟和距离。<br/>③ 收藏常练动作，直接在首页点选；再次加载可按需清空次数。<br/>④ Safari 打开在线版后用「分享 → 添加到主屏幕」。</p></div></section>
   <p class="foot">一列一组，轻点就记 · PocketGym v3.4</p>
 </main>
+<div id="quick-save-bar" class="quick-save hide"><button id="quick-save-button" type="button">✓ 保存并下一步</button></div>
 <nav class="nav" aria-label="页面导航"><button type="button" class="active" data-page="log">✎ 记录</button><button type="button" data-page="history">▤ 历史</button><button type="button" data-page="progress">↗ 趋势</button></nav>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
@@ -511,7 +518,11 @@
     if(!editing)$('save-button').textContent=step&&selectedName===step[0]&&getDay()===planState.day?'✓ 保存并下一步':'✓ 保存本次动作';
     $('exercise-preview').textContent=selectedName?selectedName:(running?'使用计划动作':'点击选择或更换动作');
     $('form-title').textContent=editing?'修改训练记录':step&&selectedName===step[0]?'第 '+(planState.index+1)+' 项 · '+step[0]:'快速记录';
-    $('form-panel').classList.toggle('guided-form',!!step&&selectedName===step[0]&&!editing);
+    const guided=!!step&&selectedName===step[0]&&getDay()===planState.day&&!editing;
+    $('form-panel').classList.toggle('guided-form',guided);
+    $('quick-save-bar').classList.toggle('hide',!(guided&&currentPage==='log'));
+    $('quick-save-button').textContent='✓ 保存并下一步 · '+(finished+1)+'/'+steps.length;
+    document.body.classList.toggle('plan-session',guided);
   }
 
   function editorOptions(){
@@ -653,14 +664,21 @@
     container.innerHTML=`<div class="bars" role="img" aria-label="最高训练重量按天统计">${days.map(([d,n])=>`<div class="barwrap"><div class="barvalue">${fmt(n)}</div><div class="bar" style="height:${Math.max(3,Math.round(n/max*98))}px"></div><div class="barlabel">${esc(d.slice(5))}</div></div>`).join('')}</div><div class="chartnote">共 ${days.length} 个训练日 · 最近一次最高重量 <strong style="color:var(--mint)">${fmt(days[days.length-1][1])} kg</strong></div>`;
   }
   function renderAll(){renderDatalist();renderChips();renderDay();renderStats();if(currentPage==='history')renderHistory();if(currentPage==='progress')renderProgress()}
-  function switchPage(page){if(!['log','history','progress'].includes(page))return;currentPage=page;for(const p of ['log','history','progress'])$('page-'+p).classList.toggle('hide',p!==page);document.querySelectorAll('.nav button').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false')});if(page==='history')renderHistory();if(page==='progress')renderProgress();window.scrollTo({top:0,behavior:'instant'})}
+  function switchPage(page){if(!['log','history','progress'].includes(page))return;currentPage=page;for(const p of ['log','history','progress'])$('page-'+p).classList.toggle('hide',p!==page);document.querySelectorAll('.nav button').forEach(b=>{b.classList.toggle('active',b.dataset.page===page);b.setAttribute('aria-current',b.dataset.page===page?'page':'false')});if(page==='history')renderHistory();if(page==='progress')renderProgress();renderPlan();window.scrollTo({top:0,behavior:'instant'})}
   function download(name,body,type){const url=URL.createObjectURL(new Blob([body],{type})),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2500)}
   function csvExport(){const header=['日期','类型','动作','器材类型','第几组','重量(kg)','次数','训练量(kg)','时长(分钟)','距离(km)','阻力/速度/坡度','备注'];const data=[header];
     for(const r of [...records].sort((a,b)=>a.day.localeCompare(b.day))){if(isCardio(r))data.push([r.day,'有氧',r.exercise,r.equipment,'','','','',r.durationMin,r.distanceKm,r.resistance||'',r.notes||'']);else for(const [i,s] of r.setsData.entries())data.push([r.day,'力量',r.exercise,r.equipment,i+1,s.kg,s.reps??'',s.reps!==null&&s.kg!==''?Number(s.kg)*s.reps:'','','','',r.notes||''])}
     const csv='\ufeff'+data.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download('健身记录_力量与有氧_'+today()+'.csv',csv,'text/csv;charset=utf-8');toast('CSV 已导出')}
-  function jsonExport(){download('健身速记_备份_'+today()+'.json',JSON.stringify({app:'PocketGym',version:3,exportedAt:new Date().toISOString(),records,favorites:[...favorites],activePlan:planState},null,2),'application/json;charset=utf-8');toast('JSON 已备份（含收藏）')}
+  function jsonExport(){download('健身速记_备份_'+today()+'.json',JSON.stringify({app:'PocketGym',version:4,exportedAt:new Date().toISOString(),records,favorites:[...favorites],templates:customTemplates,activePlan:planState},null,2),'application/json;charset=utf-8');toast('JSON 已备份（含收藏）')}
   async function importFile(e){const file=e.target.files?.[0];e.target.value='';if(!file)return;try{const obj=JSON.parse(await file.text()),incoming=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(incoming)||!incoming.every(validRecord))throw Error('不是可识别的健身记录文件');if(!confirm(`导入 ${incoming.length} 条记录，与现有 ${records.length} 条合并？同 ID 记录以导入版本为准。`))return;
-      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}if(validPlanState(obj.activePlan)){planState={...obj.activePlan,snapshot:cleanedTemplate(obj.activePlan.snapshot)||JSON.parse(JSON.stringify(PLANS[obj.activePlan.id]))};savePlan();renderPlan()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
+      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}if(obj.templates&&typeof obj.templates==='object'&&!Array.isArray(obj.templates)){
+        for(const [id,template] of Object.entries(obj.templates).slice(0,40))
+          if((Object.hasOwn(DEFAULT_PLANS,id)||/^custom-[a-z0-9-]{6,45}$/.test(id))&&cleanedTemplate(template)){
+            customTemplates[id]=cleanedTemplate(template);PLANS[id]=customTemplates[id];
+          }
+        persistTemplates();openTemplateEditor('upperA');
+      }
+      if(validPlanState(obj.activePlan)){planState={...obj.activePlan,snapshot:cleanedTemplate(obj.activePlan.snapshot)||JSON.parse(JSON.stringify(PLANS[obj.activePlan.id]))};savePlan();renderPlan()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
   function chooseAndLoad(name){const cardio=knownKind(name)==='cardio';if(cardio&&mode!=='cardio'&&mode!=='all')switchMode('cardio');else if(!cardio&&mode==='cardio')switchMode(HOME.has(name)?'home':'all');setName(name)}
   function rowAction(e){const b=e.target.closest('button[data-action]');if(!b)return;const id=b.dataset.id,action=b.dataset.action,r=records.find(r=>r.id===id);if(!r)return;
     if(action==='edit'){fillEdit(id);return}if(action==='repeat'){switchPage('log');$('workout-day').value=today();chooseAndLoad(r.exercise);$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return}
@@ -684,6 +702,7 @@
   $('edit-plan-save').addEventListener('click',saveTemplateEditor);
   $('edit-plan-copy').addEventListener('click',copyTemplateEditor);
   $('edit-plan-reset').addEventListener('click',resetTemplateEditor);
+  $('quick-save-button').addEventListener('click',()=>$('record-form').requestSubmit());
   $('plan-picker').addEventListener('change',renderPlan);
   $('plan-start').addEventListener('click',startPlan);
   $('plan-prev').addEventListener('click',()=>{if(planState)gotoPlanStep(Math.max(0,planState.index-1))});
