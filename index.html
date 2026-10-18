@@ -10,7 +10,7 @@
   <meta name="description" content="公寓健身房 2026-10-17 器械实拍更新：力量方格、有氧记录、收藏动作、训练历史，本地存储。" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
-  <title>健身速记 · PocketGym 3.4</title>
+  <title>健身速记 · PocketGym 3.5</title>
   <style>
     :root{color-scheme:dark;--bg:#0c1220;--panel:#162033;--panel2:#1c2940;--border:#2c3b53;--soft:#9db0c7;--text:#edf4ff;--mint:#72f0ba;--mintdark:#153c31;--danger:#ff9da5;--shadow:0 16px 55px #060a1440}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 45% -30%,#203a46 0%,#0c1220 60%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft Yahei',sans-serif;font-size:15px;line-height:1.5}
@@ -152,20 +152,20 @@
 </head>
 <body>
 <main class="app">
-  <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.4</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
+  <header class="top"><div class="brand"><div><div class="eyebrow">POCKETGYM <span class="version-mark">3.5</span></div><div class="title">训练</div><div class="top-date" id="top-date">今天</div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
 
   <section id="page-log" class="page">
 
 
     <section class="panel plan-panel" id="plan-panel" aria-label="训练计划">
-      <div class="panelhead"><div><h2>🗓️ 按计划训练</h2><p>选一天的训练 → 逐项打卡，保存自动进入下一项</p></div></div>
+      <div class="panelhead"><div><h2>今日计划</h2><p>选择训练日，按顺序完成每个动作</p></div></div>
       <div class="plan-picker"><select id="plan-picker" aria-label="选择训练日"></select><button class="plan-action" type="button" id="plan-start">开始训练</button></div>
       <div class="plan-meta" id="plan-meta"></div>
       <div class="plan-active-summary hide" id="plan-active-summary"><strong id="plan-progress-label"></strong><p id="plan-progress-detail"></p><div class="plan-bar"><i id="plan-progress-bar" style="width:0%"></i></div></div>
-      <details id="plan-steps-details" class="compact-details step-fold"><summary>📋 查看全部 <span id="plan-step-count">0</span> 个动作 <span class="detail-hint">点击展开进度清单</span></summary><div class="plan-steps" id="plan-steps"></div></details>
+      <details id="plan-steps-details" class="compact-details step-fold"><summary>动作列表 <span class="detail-hint"><span id="plan-step-count">0</span> 项</span></summary><div class="plan-steps" id="plan-steps"></div></details>
       <div class="plan-footer hide" id="plan-footer"><button type="button" id="plan-prev">← 上一个</button><button type="button" id="plan-skip">跳过当前 →</button><button type="button" id="plan-return">返回当前计划动作</button><button type="button" class="plan-end" id="plan-end">结束本次计划</button></div>
       <details id="template-manager" class="compact-details template-fold">
-        <summary>⚙️ 管理训练模板 <span class="detail-hint">更换动作 · 调整组数 · 排序</span></summary>
+        <summary>编辑训练计划 <span class="detail-hint">动作 · 顺序 · 组数</span></summary>
         <div class="template-editor">
           <p class="tiny">可直接修改预置训练日，或复制为自己的训练日。修改仅影响之后开始的计划，正在进行的训练不会改变。</p>
           <div class="field"><label for="edit-plan-picker">要编辑的训练日</label><select id="edit-plan-picker"></select></div>
@@ -182,23 +182,22 @@
         </div>
       </details>
     </section>
-    <details class="compact-details stats-fold" id="stats-fold"><summary>📊 训练统计 <span class="detail-hint">本周天数 · 累计组数</span></summary>  <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section></details>
-    <div class="panel" id="form-panel"><div class="panelhead"><div><h2 id="form-title">快速记录</h2><p>力量按组点格 · 有氧记录时长和距离</p></div><input id="workout-day" class="date" type="date" aria-label="训练日期" required /></div>
-      <form id="record-form"><details id="exercise-controls" class="compact-details manual-tools" open><summary>🔎 选择 / 更换动作 <span class="detail-hint" id="exercise-preview">点击选择动作</span></summary><div class="modes" role="tablist" aria-label="动作类型">
-        <button type="button" class="mode active" data-mode="home" role="tab" aria-selected="true">🏠 我的健身房</button>
-        <button type="button" class="mode" data-mode="cardio" role="tab" aria-selected="false">♥ 有氧训练</button>
-        <button type="button" class="mode" data-mode="all" role="tab" aria-selected="false">☷ 全部动作</button>
+    <div class="panel" id="form-panel"><div class="panelhead"><div><h2 id="form-title">动作记录</h2><p>每列一组，填写重量，点选次数</p></div><input id="workout-day" class="date" type="date" aria-label="训练日期" required /></div>
+      <form id="record-form"><details id="exercise-controls" class="compact-details manual-tools" open><summary>选择动作 <span class="detail-hint" id="exercise-preview">点击选择动作</span></summary><div class="modes" role="tablist" aria-label="动作类型">
+        <button type="button" class="mode active" data-mode="home" role="tab" aria-selected="true">我的健身房</button>
+        <button type="button" class="mode" data-mode="cardio" role="tab" aria-selected="false">有氧</button>
+        <button type="button" class="mode" data-mode="all" role="tab" aria-selected="false">全部动作</button>
       </div>
       <p class="modedesc" id="mode-description">已按 10 月 17 日实拍更新器械；只列出公寓能完成的力量动作。</p>
-      <details class="extra" id="equipment-guide"><summary>✓ 已确认的公寓器械（点击展开）</summary><div class="tiny" style="padding-top:10px;line-height:1.9">
+      <details class="extra" id="equipment-guide"><summary>公寓器械清单</summary><div class="tiny" style="padding-top:10px;line-height:1.9">
         <strong>绳索 / 自由重量：</strong>双侧龙门架（可引体向上）、史密斯机、哑铃、可调训练凳。<br/>
         <strong>上肢固定器械：</strong>坐姿胸推、坐姿肩推。<br/>
         <strong>下肢固定器械：</strong>腿举、腿屈伸／腿弯举双功能机、挂片式硬拉机、髋外展机。<br/>
         <strong>有氧：</strong>跑步机、健身自行车、有氧划船机、台阶式爬楼机、椭圆／交叉训练机、Concept2 SkiErg。<br/>
         <strong>尚未确认：</strong>独立高位下拉机、独立力量划船机、髋内收机；这些动作不作为“我的健身房”可用器械。
       </div></details>
-      <div class="chipslabel">★ 我的收藏 · 点动作快速载入</div><div class="chips" id="favorite-chips"></div>
-      <div class="chipslabel">⏱ 最近使用</div><div class="chips" id="recent-chips"></div>
+      <div class="chipslabel">收藏动作</div><div class="chips" id="favorite-chips"></div>
+      <div class="chipslabel">最近使用</div><div class="chips" id="recent-chips"></div>
         <div class="twocol">
           <div class="field"><label for="exercise-pick">选择动作</label><select id="exercise-pick"><option value="">— 请选择动作 —</option></select></div>
           <div class="field"><label for="equipment">器材类型</label><select id="equipment"><option>固定器械</option><option>哑铃</option><option>杠铃</option><option>史密斯机</option><option>绳索 / 滑轮</option><option>自重</option><option>壶铃</option><option>有氧器械</option><option>其他</option></select></div>
@@ -216,8 +215,8 @@
           <div class="cardio-note">有氧至少填写时长或距离。再次选择同一项目，会自动恢复上次填写的数值。</div>
         </section>
         <section id="strength-section" class="table-section" aria-label="每组重量及次数表格">
-          <div class="section-line"><h3>重量 × 次数表格</h3><div class="set-tools"><span id="set-count" class="tiny">4 组</span><button type="button" class="smallbtn add" id="add-set">＋ 加一组</button></div></div>
-          <details class="compact-details table-help"><summary>ℹ️ 如何使用次数方格</summary><p class="table-guide">每列是一组，第一行输入重量（kg）。点「10」就高亮该列 1–10 格；15 / 20 也可直接选择。点组名旁 × 删除该列。</p></details>
+          <div class="section-line"><h3>重量与次数</h3><div class="set-tools"><span id="set-count" class="tiny">4 组</span><button type="button" class="smallbtn add" id="add-set">＋ 加一组</button></div></div>
+          <details class="compact-details table-help"><summary>如何填写</summary><p class="table-guide">每列是一组，第一行输入重量（kg）。点「10」就高亮该列 1–10 格；15 / 20 也可直接选择。点组名旁 × 删除该列。</p></details>
           <div id="table-scroll" class="table-scroll" tabindex="0" aria-label="训练组记录表，超过 4 组时可横向滚动"><table class="reptable" id="reps-table"><caption class="hide">训练重量和每组次数</caption></table></div>
           <details class="compact-details legend-fold"><summary>次数方格说明</summary><div class="table-legend"><span><i class="legend-dot"></i>绿色 = 已选择次数</span><span>点同一格取消选择</span><span>5 组及以上横向滑动</span></div></details>
           <div class="summary" id="table-summary">尚未选择次数</div>
@@ -227,14 +226,20 @@
         <div class="actionrow"><button type="submit" class="primary" id="save-button">✓ 保存本次动作</button><button type="button" class="secondary hide" id="cancel-button">取消</button></div>
       </form>
     </div>
-    <details id="day-records" class="compact-details day-fold"><summary>📓 当日记录 <span id="day-record-count">0</span> 项 <span class="detail-hint">点击查看已保存动作</span></summary><div class="panel"><div class="panelhead"><div><h2 id="today-title">今天的训练</h2><p id="today-subtitle">已保存的动作记录</p></div><button id="jump-today" class="link hide" type="button">回到今天</button></div><div class="rows" id="day-list"></div></div></details>
+
+    <details class="compact-details stats-fold" id="stats-fold"><summary>训练概览 <span class="detail-hint">本周 · 累计</span></summary>  <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section></details>
+    <details id="day-records" class="compact-details day-fold"><summary>已完成的训练 <span class="detail-hint"><span id="day-record-count">0</span> 项</span></summary><div class="panel"><div class="panelhead"><div><h2 id="today-title">今天的训练</h2><p id="today-subtitle">已保存的动作记录</p></div><button id="jump-today" class="link hide" type="button">回到今天</button></div><div class="rows" id="day-list"></div></div></details>
   </section>
-  <section id="page-history" class="page hide"><h2 class="pageheading">训练历史</h2><div class="panel"><div class="panelhead"><div><h2>按日期查看</h2><p>力量每组数据和有氧时长分别保留</p></div></div><div id="history-list"></div></div><div class="panel"><div class="panelhead"><div><h2>数据备份与迁移</h2><p>记录保存在本机，建议定期备份</p></div></div><div class="toolgrid"><button class="toolbtn" id="export-csv" type="button">↓ 导出 Excel / CSV</button><button class="toolbtn" id="export-json" type="button">↓ 备份 JSON</button><button class="toolbtn" id="import-json" type="button">↑ 恢复 JSON</button><button class="toolbtn" id="clear-all" type="button">清空全部记录</button></div><input id="import-file" type="file" accept=".json,application/json" class="hide"/><p class="toolsinfo"><strong>隐私：</strong>无需注册，没有数据上传。不同设备和网址的数据不自动同步；更换设备前请导出 JSON。</p></div></section>
-  <section id="page-progress" class="page hide"><h2 class="pageheading">重量进步</h2><div class="panel"><div class="panelhead"><div><h2>力量动作的训练趋势</h2><p>仅按力量训练已完成组的最高重量统计</p></div></div><div class="labelrow"><label for="chart-exercise" class="tiny">选择动作</label><select id="chart-exercise"></select></div><div id="chart-container"></div></div><div class="panel"><h2 style="margin:0 0 10px;font-size:17px">小技巧</h2><p class="tiny" style="line-height:1.9;margin:0">① 从我的健身房、收藏或全部动作中选择，自动带入上次记录。<br/>② 力量训练点方格选次数，有氧训练则输入分钟和距离。<br/>③ 收藏常练动作，直接在首页点选；再次加载可按需清空次数。<br/>④ Safari 打开在线版后用「分享 → 添加到主屏幕」。</p></div></section>
-  <p class="foot">一列一组，轻点就记 · PocketGym v3.4</p>
+  <section id="page-history" class="page hide"><h2 class="pageheading">历史</h2><div class="panel"><div class="panelhead"><div><h2>按日期查看</h2><p>力量每组数据和有氧时长分别保留</p></div></div><div id="history-list"></div></div><div class="panel"><div class="panelhead"><div><h2>数据备份与迁移</h2><p>记录保存在本机，建议定期备份</p></div></div><div class="toolgrid"><button class="toolbtn" id="export-csv" type="button">↓ 导出 Excel / CSV</button><button class="toolbtn" id="export-json" type="button">↓ 备份 JSON</button><button class="toolbtn" id="import-json" type="button">↑ 恢复 JSON</button><button class="toolbtn" id="clear-all" type="button">清空全部记录</button></div><input id="import-file" type="file" accept=".json,application/json" class="hide"/><p class="toolsinfo"><strong>隐私：</strong>无需注册，没有数据上传。不同设备和网址的数据不自动同步；更换设备前请导出 JSON。</p></div></section>
+  <section id="page-progress" class="page hide"><h2 class="pageheading">趋势</h2><div class="panel"><div class="panelhead"><div><h2>力量动作的训练趋势</h2><p>仅按力量训练已完成组的最高重量统计</p></div></div><div class="labelrow"><label for="chart-exercise" class="tiny">选择动作</label><select id="chart-exercise"></select></div><div id="chart-container"></div></div><div class="panel"><h2 style="margin:0 0 10px;font-size:17px">小技巧</h2><p class="tiny" style="line-height:1.9;margin:0">① 从我的健身房、收藏或全部动作中选择，自动带入上次记录。<br/>② 力量训练点方格选次数，有氧训练则输入分钟和距离。<br/>③ 收藏常练动作，直接在首页点选；再次加载可按需清空次数。<br/>④ Safari 打开在线版后用「分享 → 添加到主屏幕」。</p></div></section>
+  <p class="foot">一列一组，轻点就记 · PocketGym v3.5</p>
 </main>
 <div id="quick-save-bar" class="quick-save hide"><button id="quick-save-button" type="button">✓ 保存并下一步</button></div>
-<nav class="nav" aria-label="页面导航"><button type="button" class="active" data-page="log">✎ 记录</button><button type="button" data-page="history">▤ 历史</button><button type="button" data-page="progress">↗ 趋势</button></nav>
+<nav class="nav" aria-label="页面导航">
+  <button type="button" class="active" data-page="log"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8 12h8M12 8v8"/></svg><span>训练</span></button>
+  <button type="button" data-page="history"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M7.5 3v4M16.5 3v4M4 10h16M8 14h3"/></svg><span>历史</span></button>
+  <button type="button" data-page="progress"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M7 17V12M12 17V8M17 17V4"/></svg><span>趋势</span></button>
+</nav>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script>
 (()=>{'use strict';
@@ -685,6 +690,7 @@
     if(action==='edit'){fillEdit(id);return}if(action==='repeat'){switchPage('log');$('workout-day').value=today();chooseAndLoad(r.exercise);$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return}
     if(action==='delete'){if(!confirm(`删除「${r.exercise}」这条训练（${r.day}），确定吗？`))return;records=records.filter(x=>x.id!==id);if(editing===id)resetForm();persist();renderAll();toast('已删除')}
   }
+  $('top-date').textContent=new Intl.DateTimeFormat('zh-CN',{month:'long',day:'numeric',weekday:'long'}).format(new Date());
   $('workout-day').value=planState?.day||today();redrawCatalogue();
 
   $('edit-plan-picker').addEventListener('change',e=>openTemplateEditor(e.target.value));
