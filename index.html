@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="健身速记" />
-  <meta name="description" content="格子点选次数，每一列是一组，为公寓健身房定制：力量方格、有氧记录、收藏动作和训练历史。" />
+  <meta name="description" content="公寓健身房 2026-10-17 器械实拍更新：力量方格、有氧记录、收藏动作、训练历史，本地存储。" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
-  <title>健身速记 · PocketGym 3.1</title>
+  <title>健身速记 · PocketGym 3.2</title>
   <style>
     :root{color-scheme:dark;--bg:#0c1220;--panel:#162033;--panel2:#1c2940;--border:#2c3b53;--soft:#9db0c7;--text:#edf4ff;--mint:#72f0ba;--mintdark:#153c31;--danger:#ff9da5;--shadow:0 16px 55px #060a1440}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 45% -30%,#203a46 0%,#0c1220 60%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft Yahei',sans-serif;font-size:15px;line-height:1.5}
@@ -74,7 +74,7 @@
 </head>
 <body>
 <main class="app">
-  <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.1</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
+  <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.2</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
   <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section>
   <section id="page-log" class="page">
     <div class="panel" id="form-panel"><div class="panelhead"><div><h2 id="form-title">快速记录</h2><p>力量按组点格 · 有氧记录时长和距离</p></div><input id="workout-day" class="date" type="date" aria-label="训练日期" required /></div>
@@ -83,7 +83,14 @@
         <button type="button" class="mode" data-mode="cardio" role="tab" aria-selected="false">♥ 有氧训练</button>
         <button type="button" class="mode" data-mode="all" role="tab" aria-selected="false">☷ 全部动作</button>
       </div>
-      <p class="modedesc" id="mode-description">按公寓现有器材筛选动作；部分机器型号仍待确认。</p>
+      <p class="modedesc" id="mode-description">已按 10 月 17 日实拍更新器械；只列出公寓能完成的力量动作。</p>
+      <details class="extra" id="equipment-guide"><summary>✓ 已确认的公寓器械（点击展开）</summary><div class="tiny" style="padding-top:10px;line-height:1.9">
+        <strong>绳索 / 自由重量：</strong>双侧龙门架（可引体向上）、史密斯机、哑铃、可调训练凳。<br/>
+        <strong>上肢固定器械：</strong>坐姿胸推、坐姿肩推。<br/>
+        <strong>下肢固定器械：</strong>腿举、腿屈伸／腿弯举双功能机、挂片式硬拉机、髋外展机。<br/>
+        <strong>有氧：</strong>跑步机、健身自行车、有氧划船机、台阶式爬楼机、椭圆／交叉训练机、Concept2 SkiErg。<br/>
+        <strong>尚未确认：</strong>独立高位下拉机、独立力量划船机、髋内收机；这些动作不作为“我的健身房”可用器械。
+      </div></details>
       <div class="chipslabel">★ 我的收藏 · 点动作快速载入</div><div class="chips" id="favorite-chips"></div>
       <div class="chipslabel">⏱ 最近使用</div><div class="chips" id="recent-chips"></div>
       <form id="record-form">
@@ -118,7 +125,7 @@
   </section>
   <section id="page-history" class="page hide"><h2 class="pageheading">训练历史</h2><div class="panel"><div class="panelhead"><div><h2>按日期查看</h2><p>力量每组数据和有氧时长分别保留</p></div></div><div id="history-list"></div></div><div class="panel"><div class="panelhead"><div><h2>数据备份与迁移</h2><p>记录保存在本机，建议定期备份</p></div></div><div class="toolgrid"><button class="toolbtn" id="export-csv" type="button">↓ 导出 Excel / CSV</button><button class="toolbtn" id="export-json" type="button">↓ 备份 JSON</button><button class="toolbtn" id="import-json" type="button">↑ 恢复 JSON</button><button class="toolbtn" id="clear-all" type="button">清空全部记录</button></div><input id="import-file" type="file" accept=".json,application/json" class="hide"/><p class="toolsinfo"><strong>隐私：</strong>无需注册，没有数据上传。不同设备和网址的数据不自动同步；更换设备前请导出 JSON。</p></div></section>
   <section id="page-progress" class="page hide"><h2 class="pageheading">重量进步</h2><div class="panel"><div class="panelhead"><div><h2>力量动作的训练趋势</h2><p>仅按力量训练已完成组的最高重量统计</p></div></div><div class="labelrow"><label for="chart-exercise" class="tiny">选择动作</label><select id="chart-exercise"></select></div><div id="chart-container"></div></div><div class="panel"><h2 style="margin:0 0 10px;font-size:17px">小技巧</h2><p class="tiny" style="line-height:1.9;margin:0">① 从我的健身房、收藏或全部动作中选择，自动带入上次记录。<br/>② 力量训练点方格选次数，有氧训练则输入分钟和距离。<br/>③ 收藏常练动作，直接在首页点选；再次加载可按需清空次数。<br/>④ Safari 打开在线版后用「分享 → 添加到主屏幕」。</p></div></section>
-  <p class="foot">一列一组，轻点就记 · PocketGym v3.1</p>
+  <p class="foot">一列一组，轻点就记 · PocketGym v3.2</p>
 </main>
 <nav class="nav" aria-label="页面导航"><button type="button" class="active" data-page="log">✎ 记录</button><button type="button" data-page="history">▤ 历史</button><button type="button" data-page="progress">↗ 趋势</button></nav>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -126,18 +133,22 @@
 (()=>{'use strict';
   // 保留 v2 的 key：升级时可继续使用本地历史，不改变旧记录。
   const KEY='pocket_gymlog_v1', FAVORITES_KEY='pocketgym_favorites_v3';
+  // 2026-10-17: refreshed against ten photos of the apartment gym.
+  // Preserve Chinese exercise names and storage keys for backwards-compatible saved logs.
   const OPTIONS=[
     ['胸部',[
       ['坐姿推胸','固定器械','Chest Press'],['史密斯卧推','史密斯机','Smith Bench Press'],['哑铃卧推','哑铃','Dumbbell Bench Press'],['上斜哑铃卧推','哑铃','Incline Dumbbell Press'],['绳索夹胸','绳索 / 滑轮','Cable Fly'],
-      ['杠铃卧推','杠铃','Barbell Bench Press'],['蝴蝶机夹胸','固定器械','Pec Deck'],['俯卧撑','自重','Push-up']]],
+      ['俯卧撑','自重','Push-up'],['杠铃卧推','杠铃','Barbell Bench Press'],['蝴蝶机夹胸','固定器械','Pec Deck']]],
     ['背部',[
-      ['单臂哑铃划船','哑铃','One-arm Dumbbell Row'],['绳索划船','绳索 / 滑轮','Cable Row'],['跪姿绳索下拉','绳索 / 滑轮','Kneeling Cable Lat Pulldown'],['直臂下拉','绳索 / 滑轮','Straight-arm Pulldown'],
-      ['高位下拉','固定器械','Lat Pulldown · 需要专用器械'],['坐姿划船','固定器械','Seated Row · 需要专用器械'],['器械划船','固定器械','Machine Row'],['杠铃划船','杠铃','Barbell Row'],['引体向上','自重','Pull-up']]],
+      ['单臂哑铃划船','哑铃','One-arm Dumbbell Row'],['绳索划船','绳索 / 滑轮','Cable Row'],['跪姿绳索下拉','绳索 / 滑轮','Kneeling Cable Lat Pulldown'],['直臂下拉','绳索 / 滑轮','Straight-arm Pulldown'],['引体向上','自重','Pull-up · 龙门架上方握把'],
+      ['高位下拉','固定器械','Lat Pulldown · 需要专用器械'],['坐姿划船','固定器械','Seated Row · 需要专用器械'],['器械划船','固定器械','Machine Row'],['杠铃划船','杠铃','Barbell Row']]],
     ['肩部',[
-      ['坐姿肩推','固定器械','Shoulder Press'],['哑铃肩推','哑铃','Dumbbell Shoulder Press'],['哑铃侧平举','哑铃','Lateral Raise'],['绳索侧平举','绳索 / 滑轮','Cable Lateral Raise'],['面拉','绳索 / 滑轮','Face Pull'],['反向飞鸟','固定器械','Reverse Fly']]],
+      ['坐姿肩推','固定器械','Shoulder Press'],['哑铃肩推','哑铃','Dumbbell Shoulder Press'],['哑铃侧平举','哑铃','Lateral Raise'],['绳索侧平举','绳索 / 滑轮','Cable Lateral Raise'],['面拉','绳索 / 滑轮','Face Pull'],['反向飞鸟','固定器械','Reverse Fly · 需要专用器械']]],
     ['腿部 / 臀部',[
-      ['腿举','固定器械','Seated Leg Press'],['史密斯深蹲','史密斯机','Smith Squat'],['哑铃罗马尼亚硬拉','哑铃','Dumbbell Romanian Deadlift'],['髋外展','固定器械','Hip Abduction'],['腿弯举','固定器械','Leg Curl · 器械待确认'],['挂片硬拉','固定器械','Plate-loaded Deadlift · 待确认'],
-      ['腿屈伸','固定器械','Leg Extension'],['深蹲','杠铃','Squat'],['罗马尼亚硬拉','杠铃','Romanian Deadlift'],['硬拉','杠铃','Deadlift'],['臀桥','杠铃','Hip Thrust'],['小腿提踵','固定器械','Calf Raise']]],
+      ['腿举','固定器械','Leg Press'],['史密斯深蹲','史密斯机','Smith Squat'],['哑铃罗马尼亚硬拉','哑铃','Dumbbell Romanian Deadlift'],['史密斯罗马尼亚硬拉','史密斯机','Smith Romanian Deadlift'],
+      ['髋外展','固定器械','Hip Abductor'],['腿屈伸','固定器械','Leg Extension · 双功能机'],['腿弯举','固定器械','Leg Curl · 双功能机'],['挂片硬拉','固定器械','Plate-loaded Deadlift · Technogym'],
+      ['哑铃保加利亚分腿蹲','哑铃','Dumbbell Bulgarian Split Squat'],['史密斯臀桥','史密斯机','Smith Hip Thrust'],
+      ['深蹲','杠铃','Squat'],['罗马尼亚硬拉','杠铃','Romanian Deadlift'],['硬拉','杠铃','Deadlift'],['臀桥','杠铃','Hip Thrust'],['小腿提踵','固定器械','Calf Raise']]],
     ['手臂',[
       ['哑铃弯举','哑铃','Dumbbell Curl'],['锤式弯举','哑铃','Hammer Curl'],['绳索弯举','绳索 / 滑轮','Cable Curl'],['绳索下压','绳索 / 滑轮','Triceps Pushdown'],['头顶臂屈伸','哑铃','Overhead Extension'],['杠铃弯举','杠铃','Barbell Curl']]],
     ['核心',[
@@ -147,17 +158,18 @@
     ['跑步机','有氧器械','Treadmill'],
     ['健身自行车','有氧器械','Stationary Bike'],
     ['有氧划船机','有氧器械','Rowing Ergometer'],
-    ['爬楼机','有氧器械','Stair Climber'],
-    ['滑雪训练机','有氧器械','SkiErg · 待确认']
+    ['爬楼机','有氧器械','Stair Climber / StepMill'],
+    ['椭圆机','有氧器械','Elliptical / Cross Trainer'],
+    ['滑雪训练机','有氧器械','Concept2 SkiErg']
   ];
   const HOME=new Set([
-    '坐姿推胸','史密斯卧推','哑铃卧推','上斜哑铃卧推','绳索夹胸',
-    '单臂哑铃划船','绳索划船','跪姿绳索下拉','直臂下拉',
+    '坐姿推胸','史密斯卧推','哑铃卧推','上斜哑铃卧推','绳索夹胸','俯卧撑',
+    '单臂哑铃划船','绳索划船','跪姿绳索下拉','直臂下拉','引体向上',
     '坐姿肩推','哑铃肩推','哑铃侧平举','绳索侧平举','面拉',
-    '腿举','史密斯深蹲','哑铃罗马尼亚硬拉','髋外展','腿弯举','挂片硬拉',
-    '哑铃弯举','锤式弯举','绳索弯举','绳索下压','头顶臂屈伸','平板支撑','卷腹','绳索卷腹'
+    '腿举','史密斯深蹲','哑铃罗马尼亚硬拉','史密斯罗马尼亚硬拉','髋外展','腿屈伸','腿弯举','挂片硬拉','哑铃保加利亚分腿蹲','史密斯臀桥',
+    '哑铃弯举','锤式弯举','绳索弯举','绳索下压','头顶臂屈伸',
+    '平板支撑','卷腹','绳索卷腹','悬垂举腿'
   ]);
-  const UNCONFIRMED=new Set(['腿弯举','挂片硬拉','滑雪训练机']);
   const DEFAULT_FAVES=['坐姿推胸','哑铃卧推','绳索划船','腿举','坐姿肩推','哑铃弯举','跑步机'];
   const CARDIO_NAMES=new Set(CARDIO.map(x=>x[0]));
   const OLD_ALIASES={'坐姿推胸':['Chest Press'],'高位下拉':['Lat Pulldown'],'腿举':['Leg Press'],'坐姿划船':['Cable Row'],'杠铃卧推':['卧推'],'坐姿肩推':['肩部推举'],'哑铃侧平举':['侧平举']};
@@ -218,7 +230,7 @@
     if(!['home','cardio','all'].includes(next))return;
     mode=next;
     document.querySelectorAll('[data-mode]').forEach(b=>{let active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
-    $('mode-description').textContent=mode==='home'?'🏠 只显示公寓器材能完成的力量动作；腿弯举、挂片硬拉机仍待确认。':mode==='cardio'?'♥ 跑步机、自行车、有氧划船机、爬楼机（Stair Climber）；滑雪训练机尚待确认。':'☷ 包含其他健身房的常见动作；高位下拉机、坐姿力量划船机不在你公寓。';
+    $('mode-description').textContent=mode==='home'?'🏠 已按实拍确认：腿屈伸／弯举、挂片硬拉、引体向上等均可选。':mode==='cardio'?'♥ 跑步机、自行车、划船机、爬楼机、椭圆机与 Concept2 SkiErg 均已确认。':'☷ 也包含其他健身房动作；独立高位下拉机、力量划船机尚未确认。';
     if(clear)resetForm();
     redrawCatalogue();
     if(!selectedName)updateKind(mode==='cardio'?'cardio':'strength');
