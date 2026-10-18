@@ -10,7 +10,7 @@
   <meta name="description" content="公寓健身房 2026-10-17 器械实拍更新：力量方格、有氧记录、收藏动作、训练历史，本地存储。" />
   <link rel="manifest" href="./manifest.webmanifest" />
   <link rel="apple-touch-icon" href="./icon-192.png" />
-  <title>健身速记 · PocketGym 3.2</title>
+  <title>健身速记 · PocketGym 3.3</title>
   <style>
     :root{color-scheme:dark;--bg:#0c1220;--panel:#162033;--panel2:#1c2940;--border:#2c3b53;--soft:#9db0c7;--text:#edf4ff;--mint:#72f0ba;--mintdark:#153c31;--danger:#ff9da5;--shadow:0 16px 55px #060a1440}
     *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(ellipse at 45% -30%,#203a46 0%,#0c1220 60%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft Yahei',sans-serif;font-size:15px;line-height:1.5}
@@ -70,13 +70,50 @@
       .table-scroll.fit-four .delset{flex-basis:21px;width:21px}
       .table-scroll.fit-four .reptable{border-spacing:2px 3px}
     }
+
+    /* Workout-guided mode: compact, touch-friendly, independent of legacy logs. */
+    .plan-panel{border-color:#326657;background:linear-gradient(160deg,#173a36,#162033 58%)}
+    .plan-panel .panelhead{margin-bottom:9px}
+    .plan-picker{display:flex;gap:8px;align-items:center}
+    .plan-picker select{min-width:0;flex:1;border:1px solid #447266;border-radius:12px;background:#101e2b;color:#f3f9ff;min-height:45px;padding:9px;font-size:13px}
+    .plan-action{min-width:95px;min-height:45px;border:0;border-radius:12px;background:var(--mint);color:#06251b;font-weight:850;font-size:13px}
+    .plan-meta{font-size:12px;color:#a9c9c3;line-height:1.6;margin:9px 0}
+    .plan-active-summary{border:1px solid #477764;border-radius:12px;background:#102f2d;padding:11px 12px;margin:12px 0}
+    .plan-active-summary strong{display:block;color:#b8ffe0;font-size:13px}
+    .plan-active-summary p{font-size:12px;color:#c5d8df;margin:4px 0 9px}
+    .plan-bar{height:7px;border-radius:99px;background:#34495a;overflow:hidden}
+    .plan-bar>i{display:block;height:100%;background:var(--mint);transition:width .2s}
+    .plan-steps{display:grid;grid-template-columns:1fr;gap:7px;margin:10px 0}
+    .plan-step{width:100%;border:1px solid #365066;background:#1b2d42;text-align:left;color:#dfecf5;display:flex;align-items:center;gap:9px;border-radius:12px;min-height:52px;padding:8px 10px}
+    .plan-step.current{background:#1a5144;border-color:#70eabc}
+    .plan-step.done{border-color:#406451}
+    .plan-step .plan-number{width:28px;height:28px;flex:none;border-radius:9px;background:#2a4054;display:grid;place-items:center;font-weight:900;color:#d1e6f1;font-size:13px}
+    .plan-step.done .plan-number{color:#132b22;background:var(--mint)}
+    .plan-step .plan-main{min-width:0;flex:1}
+    .plan-step b{display:block;font-size:12px;line-height:1.4}
+    .plan-step small{display:block;font-size:11px;color:#a9c2d1;margin-top:2px}
+    .plan-step.current small{color:#c0eadd}
+    .plan-footer{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+    .plan-footer button{border:1px solid #54716b;background:#203c41;color:#dbf1e7;font-size:12px;font-weight:700;min-height:37px;padding:7px 11px;border-radius:9px}
+    .plan-footer .plan-end{color:#ffb5b9;background:#382c38;border-color:#765061}
+    #plan-steps:not(.active) .plan-step{opacity:.83}
+    @media(max-width:370px){.plan-picker{flex-wrap:wrap}.plan-picker select{width:100%;flex-basis:100%}.plan-action{flex:1}}
   </style>
 </head>
 <body>
 <main class="app">
-  <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.2</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
+  <header class="top"><div class="brand"><div class="logo" aria-hidden="true">↗</div><div><div class="eyebrow">POCKET GYM LOG</div><div class="title">健身速记 <span style="font-size:10px;color:#7cd8b2;vertical-align:middle">3.3</span></div></div></div><span id="storage-status" class="storestatus">● 本地保存</span></header>
   <section class="hero" aria-label="训练统计"><div><div class="statlabel">本周训练天数</div><div id="week-stat" class="stat">0 <small>天</small></div><div class="subhint">每一点进步都值得记录</div></div><div><div class="statlabel">累计完成组数</div><div id="all-stat" class="stat">0 <small>组</small></div><div class="subhint">按每组实际次数统计</div></div></section>
   <section id="page-log" class="page">
+
+    <section class="panel plan-panel" id="plan-panel" aria-label="训练计划">
+      <div class="panelhead"><div><h2>🗓️ 按计划训练</h2><p>选一天的训练 → 逐项打卡，保存自动进入下一项</p></div></div>
+      <div class="plan-picker"><select id="plan-picker" aria-label="选择训练日"></select><button class="plan-action" type="button" id="plan-start">开始训练</button></div>
+      <div class="plan-meta" id="plan-meta"></div>
+      <div class="plan-active-summary hide" id="plan-active-summary"><strong id="plan-progress-label"></strong><p id="plan-progress-detail"></p><div class="plan-bar"><i id="plan-progress-bar" style="width:0%"></i></div></div>
+      <div class="plan-steps" id="plan-steps"></div>
+      <div class="plan-footer hide" id="plan-footer"><button type="button" id="plan-prev">← 上一个</button><button type="button" id="plan-skip">跳过当前 →</button><button type="button" id="plan-return">返回当前计划动作</button><button type="button" class="plan-end" id="plan-end">结束本次计划</button></div>
+    </section>
     <div class="panel" id="form-panel"><div class="panelhead"><div><h2 id="form-title">快速记录</h2><p>力量按组点格 · 有氧记录时长和距离</p></div><input id="workout-day" class="date" type="date" aria-label="训练日期" required /></div>
       <div class="modes" role="tablist" aria-label="动作类型">
         <button type="button" class="mode active" data-mode="home" role="tab" aria-selected="true">🏠 我的健身房</button>
@@ -125,7 +162,7 @@
   </section>
   <section id="page-history" class="page hide"><h2 class="pageheading">训练历史</h2><div class="panel"><div class="panelhead"><div><h2>按日期查看</h2><p>力量每组数据和有氧时长分别保留</p></div></div><div id="history-list"></div></div><div class="panel"><div class="panelhead"><div><h2>数据备份与迁移</h2><p>记录保存在本机，建议定期备份</p></div></div><div class="toolgrid"><button class="toolbtn" id="export-csv" type="button">↓ 导出 Excel / CSV</button><button class="toolbtn" id="export-json" type="button">↓ 备份 JSON</button><button class="toolbtn" id="import-json" type="button">↑ 恢复 JSON</button><button class="toolbtn" id="clear-all" type="button">清空全部记录</button></div><input id="import-file" type="file" accept=".json,application/json" class="hide"/><p class="toolsinfo"><strong>隐私：</strong>无需注册，没有数据上传。不同设备和网址的数据不自动同步；更换设备前请导出 JSON。</p></div></section>
   <section id="page-progress" class="page hide"><h2 class="pageheading">重量进步</h2><div class="panel"><div class="panelhead"><div><h2>力量动作的训练趋势</h2><p>仅按力量训练已完成组的最高重量统计</p></div></div><div class="labelrow"><label for="chart-exercise" class="tiny">选择动作</label><select id="chart-exercise"></select></div><div id="chart-container"></div></div><div class="panel"><h2 style="margin:0 0 10px;font-size:17px">小技巧</h2><p class="tiny" style="line-height:1.9;margin:0">① 从我的健身房、收藏或全部动作中选择，自动带入上次记录。<br/>② 力量训练点方格选次数，有氧训练则输入分钟和距离。<br/>③ 收藏常练动作，直接在首页点选；再次加载可按需清空次数。<br/>④ Safari 打开在线版后用「分享 → 添加到主屏幕」。</p></div></section>
-  <p class="foot">一列一组，轻点就记 · PocketGym v3.2</p>
+  <p class="foot">一列一组，轻点就记 · PocketGym v3.3</p>
 </main>
 <nav class="nav" aria-label="页面导航"><button type="button" class="active" data-page="log">✎ 记录</button><button type="button" data-page="history">▤ 历史</button><button type="button" data-page="progress">↗ 趋势</button></nav>
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
@@ -140,7 +177,7 @@
       ['坐姿推胸','固定器械','Chest Press'],['史密斯卧推','史密斯机','Smith Bench Press'],['哑铃卧推','哑铃','Dumbbell Bench Press'],['上斜哑铃卧推','哑铃','Incline Dumbbell Press'],['绳索夹胸','绳索 / 滑轮','Cable Fly'],
       ['俯卧撑','自重','Push-up'],['杠铃卧推','杠铃','Barbell Bench Press'],['蝴蝶机夹胸','固定器械','Pec Deck']]],
     ['背部',[
-      ['单臂哑铃划船','哑铃','One-arm Dumbbell Row'],['绳索划船','绳索 / 滑轮','Cable Row'],['跪姿绳索下拉','绳索 / 滑轮','Kneeling Cable Lat Pulldown'],['直臂下拉','绳索 / 滑轮','Straight-arm Pulldown'],['引体向上','自重','Pull-up · 龙门架上方握把'],
+      ['单臂哑铃划船','哑铃','One-arm Dumbbell Row'],['绳索划船','绳索 / 滑轮','Cable Row'],['跪姿绳索下拉','绳索 / 滑轮','Kneeling Cable Lat Pulldown'],['单臂绳索下拉','绳索 / 滑轮','Single-arm Cable Lat Pulldown'],['直臂下拉','绳索 / 滑轮','Straight-arm Pulldown'],['引体向上','自重','Pull-up · 龙门架上方握把'],
       ['高位下拉','固定器械','Lat Pulldown · 需要专用器械'],['坐姿划船','固定器械','Seated Row · 需要专用器械'],['器械划船','固定器械','Machine Row'],['杠铃划船','杠铃','Barbell Row']]],
     ['肩部',[
       ['坐姿肩推','固定器械','Shoulder Press'],['哑铃肩推','哑铃','Dumbbell Shoulder Press'],['哑铃侧平举','哑铃','Lateral Raise'],['绳索侧平举','绳索 / 滑轮','Cable Lateral Raise'],['面拉','绳索 / 滑轮','Face Pull'],['反向飞鸟','固定器械','Reverse Fly · 需要专用器械']]],
@@ -164,7 +201,7 @@
   ];
   const HOME=new Set([
     '坐姿推胸','史密斯卧推','哑铃卧推','上斜哑铃卧推','绳索夹胸','俯卧撑',
-    '单臂哑铃划船','绳索划船','跪姿绳索下拉','直臂下拉','引体向上',
+    '单臂哑铃划船','绳索划船','跪姿绳索下拉','单臂绳索下拉','直臂下拉','引体向上',
     '坐姿肩推','哑铃肩推','哑铃侧平举','绳索侧平举','面拉',
     '腿举','史密斯深蹲','哑铃罗马尼亚硬拉','史密斯罗马尼亚硬拉','髋外展','腿屈伸','腿弯举','挂片硬拉','哑铃保加利亚分腿蹲','史密斯臀桥',
     '哑铃弯举','锤式弯举','绳索弯举','绳索下压','头顶臂屈伸',
@@ -173,7 +210,32 @@
   const DEFAULT_FAVES=['坐姿推胸','哑铃卧推','绳索划船','腿举','坐姿肩推','哑铃弯举','跑步机'];
   const CARDIO_NAMES=new Set(CARDIO.map(x=>x[0]));
   const OLD_ALIASES={'坐姿推胸':['Chest Press'],'高位下拉':['Lat Pulldown'],'腿举':['Leg Press'],'坐姿划船':['Cable Row'],'杠铃卧推':['卧推'],'坐姿肩推':['肩部推举'],'哑铃侧平举':['侧平举']};
-  const REP_CHOICES=[1,2,3,4,5,6,7,8,9,10,15,20];
+
+  // Four-day upper/lower plan; Upper A reproduces the agreed 7-move, 16-set day.
+  // The order is deliberate: press / row / press / pulldown / shoulders / arms.
+  const PLANS={
+    upperA:{title:'上肢 A · 胸背肩臂',focus:'胸、背、肩、手臂 · 7 个动作 / 16 组',items:[
+      ['坐姿推胸',3,'8–12','90–150 秒'],['绳索划船',3,'8–12','90–150 秒'],
+      ['哑铃卧推',2,'8–12','90–150 秒'],['单臂绳索下拉',2,'10–12 / 侧','60–90 秒'],
+      ['哑铃侧平举',2,'12–15','60–90 秒'],['哑铃弯举',2,'10–15','60–90 秒'],['绳索下压',2,'10–15','60–90 秒']
+    ]},
+    lowerA:{title:'下肢 A · 腿前侧为主',focus:'腿部、臀部 · 5 个动作 / 12 组',items:[
+      ['腿举',3,'8–12','90–150 秒'],['哑铃罗马尼亚硬拉',3,'8–12','90–150 秒'],
+      ['腿屈伸',2,'10–15','60–90 秒'],['腿弯举',2,'10–15','60–90 秒'],['髋外展',2,'12–15','60–90 秒']
+    ]},
+    upperB:{title:'上肢 B · 肩背与胸',focus:'肩、背、胸、手臂 · 7 个动作 / 16 组',items:[
+      ['史密斯卧推',3,'8–12','90–150 秒'],['单臂哑铃划船',3,'8–12 / 侧','90–150 秒'],
+      ['坐姿肩推',2,'8–12','90–150 秒'],['绳索夹胸',2,'10–15','60–90 秒'],
+      ['直臂下拉',2,'10–15','60–90 秒'],['锤式弯举',2,'10–15','60–90 秒'],['头顶臂屈伸',2,'10–15','60–90 秒']
+    ]},
+    lowerB:{title:'下肢 B · 臀和腿后侧',focus:'臀、腿后侧、腿前侧 · 5 个动作 / 12 组',items:[
+      ['史密斯深蹲',3,'8–12','90–150 秒'],['挂片硬拉',3,'8–12','90–150 秒'],
+      ['哑铃保加利亚分腿蹲',2,'8–12 / 侧','90–150 秒'],['腿弯举',2,'10–15','60–90 秒'],
+      ['髋外展',2,'12–15','60–90 秒']
+    ]}
+  };
+  const PLAN_KEY='pocketgym_active_plan_v33';
+  const REP_CHOICES=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,20];
   const $=id=>document.getElementById(id);
   const today=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
   const validDay=s=>typeof s==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(s)&&!Number.isNaN(new Date(s+'T12:00:00').getTime());
@@ -183,7 +245,7 @@
   const mkSet=(kg='',reps=null)=>({kg,reps});
   const mkDefault=()=>Array.from({length:4},()=>mkSet());
   const isCardio=r=>r.kind==='cardio';
-  let records=[],grid=mkDefault(),editing=null,selectedName='',currentPage='log',mode='home',kind='strength',favorites=new Set(DEFAULT_FAVES),toastTimer=0,storageOkay=true;
+  let records=[],grid=mkDefault(),editing=null,selectedName='',currentPage='log',mode='home',kind='strength',favorites=new Set(DEFAULT_FAVES),toastTimer=0,storageOkay=true,planState=null;
   function normalizedSets(r){if(Array.isArray(r.setsData))return r.setsData.map(s=>mkSet(s.kg,s.reps));return Array.from({length:Math.max(1,Math.min(20,Number(r.sets)||1))},()=>mkSet(Number(r.kg)||0,Number(r.reps)||null))}
   function validRecord(r){
     if(!r||typeof r!=='object'||typeof r.id!=='string'||!validDay(r.day)||typeof r.exercise!=='string'||!r.exercise.trim())return false;
@@ -194,6 +256,16 @@
   function norm(r){return isCardio(r)?{...r,durationMin:r.durationMin==null?'':r.durationMin,distanceKm:r.distanceKm==null?'':r.distanceKm,resistance:r.resistance||''}:{...r,setsData:normalizedSets(r),kind:'strength'}}
   try{const parsed=JSON.parse(localStorage.getItem(KEY)||'[]');if(Array.isArray(parsed))records=parsed.filter(validRecord).map(norm)}catch(e){storageOkay=false}
   try{const f=JSON.parse(localStorage.getItem(FAVORITES_KEY)||'null');if(Array.isArray(f))favorites=new Set(f.filter(x=>typeof x==='string').slice(0,250))}catch(e){}
+
+  function validPlanState(state){
+    if(!state||typeof state!=='object'||!Object.hasOwn(PLANS,state.id)||!validDay(state.day)||!Number.isInteger(state.index))return false;
+    const count=PLANS[state.id].items.length;
+    return state.index>=0&&state.index<=count&&state.done&&typeof state.done==='object'&&!Array.isArray(state.done)
+      &&Object.keys(state.done).every(k=>/^(0|[1-9]\d*)$/.test(k)&&Number(k)<count&&typeof state.done[k]==='string')
+      &&Array.isArray(state.skipped)&&state.skipped.every(i=>Number.isInteger(i)&&i>=0&&i<count);
+  }
+  try{const restored=JSON.parse(localStorage.getItem(PLAN_KEY)||'null');if(validPlanState(restored))planState=restored}catch(e){}
+  function savePlan(){try{if(planState)localStorage.setItem(PLAN_KEY,JSON.stringify(planState));else localStorage.removeItem(PLAN_KEY)}catch(e){toast('训练计划进度保存失败')}}
   try{const key='__gym_probe';localStorage.setItem(key,'1');localStorage.removeItem(key)}catch(e){storageOkay=false}
   function showStorage(){$('storage-status').textContent=storageOkay?'● 本地保存':'⚠ 保存不可用';$('storage-status').classList.toggle('bad',!storageOkay)}
   showStorage();
@@ -243,7 +315,7 @@
       if(prev){grid=isCardio(prev)?mkDefault():normalizedSets(prev);setCardio(isCardio(prev)?prev:null);$('equipment').value=prev.equipment||defaultEquipment(selectedName);
         $('previous-hint').textContent=`✓ 已载入 ${prev.day} 的${isCardio(prev)?'有氧数据':'重量与次数表格'}，可直接修改。`;$('previous-hint').classList.add('loaded');$('reload-previous').classList.remove('hide')}
       else{grid=mkDefault();setCardio(null);$('previous-hint').textContent=kind==='cardio'?'首次记录此有氧项目：请输入训练时长或距离。':'首次记录此动作：默认 4 组，请填写重量并点选次数。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide')}}
-    renderTable();
+    renderTable();renderPlan();
   }
   function setCardio(r){$('cardio-minutes').value=r&&r.durationMin!==''?r.durationMin:'';$('cardio-distance').value=r&&r.distanceKm!==''?r.distanceKm:'';$('cardio-resistance').value=r?.resistance||''}
   function renderTable(){const wrap=$('table-scroll');const scrollX=wrap.scrollLeft;wrap.classList.toggle('fit-four',grid.length<=4);$('set-count').textContent=grid.length+' 组';
@@ -255,14 +327,17 @@
   function updateSummary(){let done=0,total=0;const lines=[];for(let i=0;i<grid.length;i++){const s=grid[i];if(s.reps!==null){done++;lines.push(`${s.kg!==''?fmt(s.kg):'—'} kg × ${s.reps}`);if(s.kg!=='')total+=Number(s.kg)*s.reps}else lines.push('—')}
     $('table-summary').innerHTML=`已选 <strong>${done}/${grid.length}</strong> 组 · 总训练量 <strong>${fmt(total)} kg</strong><div class="small">${lines.map((txt,i)=>`第${i+1}组 ${esc(txt)}`).join(' · ')}</div>`;
   }
-  function resetForm(){editing=null;selectedName='';$('record-form').reset();$('form-title').textContent='快速记录';$('save-button').textContent='✓ 保存本次动作';$('cancel-button').classList.add('hide');$('notes-details').open=false;grid=mkDefault();setCardio(null);$('previous-hint').textContent='选择动作后，会自动载入上次保存的数据。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');updateKind(mode==='cardio'?'cardio':'strength');updatePicker('');renderFavoriteToggle();renderTable()}
+  function resetForm(){editing=null;selectedName='';$('record-form').reset();$('form-title').textContent='快速记录';$('save-button').textContent='✓ 保存本次动作';$('cancel-button').classList.add('hide');$('notes-details').open=false;grid=mkDefault();setCardio(null);$('previous-hint').textContent='选择动作后，会自动载入上次保存的数据。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');updateKind(mode==='cardio'?'cardio':'strength');updatePicker('');renderFavoriteToggle();renderTable();renderPlan()}
   function fillEdit(id){const r=records.find(x=>x.id===id);if(!r)return;switchPage('log');switchMode(isCardio(r)?'cardio':(HOME.has(r.exercise)?'home':'all'));
     editing=r.id;selectedName=r.exercise;$('workout-day').value=r.day;$('exercise').value=r.exercise;updatePicker(r.exercise);updateKind(isCardio(r)?'cardio':'strength');$('equipment').value=r.equipment||defaultEquipment(r.exercise);grid=isCardio(r)?mkDefault():normalizedSets(r);setCardio(isCardio(r)?r:null);
-    $('notes').value=r.notes||'';$('notes-details').open=!!r.notes;$('previous-hint').textContent='正在修改此条已保存的训练记录。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');$('form-title').textContent='修改训练记录';$('save-button').textContent='✓ 保存修改';$('cancel-button').classList.remove('hide');renderFavoriteToggle();renderTable();renderDay();$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
+    $('notes').value=r.notes||'';$('notes-details').open=!!r.notes;$('previous-hint').textContent='正在修改此条已保存的训练记录。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');$('form-title').textContent='修改训练记录';$('save-button').textContent='✓ 保存修改';$('cancel-button').classList.remove('hide');renderFavoriteToggle();renderTable();renderDay();renderPlan();$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
   }
   function numericField(id,max){const v=$(id).value.trim();if(!v)return '';const n=Number(v);return Number.isFinite(n)&&n>=0&&n<=max?n:NaN}
   function saveRecord(e){e.preventDefault();const exercise=$('exercise').value.trim(),day=getDay(),equipment=$('equipment').value,notes=$('notes').value.trim();if(!exercise||!validDay(day)){toast('请选择日期和动作');return}
-    const existing=editing?records.find(r=>r.id===editing):null;
+    const plan=planState&&PLANS[planState.id],step=plan?.items[planState.index];
+    const planMatch=!editing&&!!step&&exercise===step[0]&&day===planState.day;
+    const planSavedId=planMatch?planState.done[planState.index]:null;
+    const existing=records.find(r=>r.id===(editing||planSavedId))||null;
     let entry={id:existing?.id||uid(),day,exercise,equipment,kind,notes,createdAt:existing?.createdAt||new Date().toISOString()};
     if(kind==='cardio'){
       const durationMin=numericField('cardio-minutes',1440),distanceKm=numericField('cardio-distance',1000);
@@ -274,8 +349,105 @@
       if(!grid.some(s=>s.reps!==null)){toast('至少点选一组次数，再保存');return}
       entry={...entry,setsData:grid.map(s=>mkSet(s.kg===''?'':Number(s.kg),s.reps))};
     }
-    if(editing){records=records.map(r=>r.id===editing?entry:r);toast('✓ 已更新训练记录')}
-    else{records.push(entry);toast('✓ 已记下 '+exercise)}persist();resetForm();renderAll();
+    if(existing){records=records.map(r=>r.id===existing.id?entry:r);toast('✓ 已更新训练记录')}
+    else{records.push(entry);toast('✓ 已记下 '+exercise)}
+    persist();
+    if(planMatch){
+      planState.done[planState.index]=entry.id;
+      planState.skipped=planState.skipped.filter(i=>i!==planState.index);
+      planState.index=nextPlanIndex(planState.index+1);
+      savePlan();
+    }
+    resetForm();renderAll();
+    if(planMatch){
+      if(planState.index<plan.items.length){loadPlanStep();toast('✓ 已保存，进入下一动作：'+plan.items[planState.index][0]);}
+      else{renderPlan();toast('🎉 本次训练动作已全部处理完毕！');}
+      $('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  }
+
+  function nextPlanIndex(from){
+    if(!planState)return 0;
+    const count=PLANS[planState.id].items.length;
+    for(let i=from;i<count;i++)if(!planState.done[i]&&!planState.skipped.includes(i))return i;
+    for(let i=0;i<from&&i<count;i++)if(!planState.done[i]&&!planState.skipped.includes(i))return i;
+    return count;
+  }
+  function renderPlan(){
+    const picker=$('plan-picker');if(!picker)return;
+    const id=planState?.id||picker.value||'upperA';
+    if(!picker.options.length)picker.innerHTML=Object.entries(PLANS).map(([k,v])=>`<option value="${k}">${v.title}</option>`).join('');
+    if(Object.hasOwn(PLANS,id))picker.value=id;
+    const selected=PLANS[picker.value],running=!!planState;
+    picker.disabled=running;
+    $('plan-start').textContent=running?'继续训练':'开始训练';
+    $('plan-meta').textContent=selected.focus+' · 按顺序点击保存并下一步；上一重量会自动带入（次数清空）。';
+    $('plan-active-summary').classList.toggle('hide',!running);
+    $('plan-footer').classList.toggle('hide',!running);
+    let steps=selected.items,finished=0;
+    if(running){
+      finished=steps.filter((_,i)=>planState.done[i]||planState.skipped.includes(i)).length;
+      const complete=planState.index>=steps.length;
+      $('plan-progress-label').textContent=complete?'🎉 本轮训练已完成':`进行中 · ${finished}/${steps.length} 项`;
+      $('plan-progress-detail').textContent=complete?'所有动作已保存或跳过。点击“结束本次计划”返回普通记录。':`训练日期 ${planState.day} · 当前：第 ${planState.index+1} 项 ${steps[planState.index][0]}`;
+      $('plan-progress-bar').style.width=Math.round(finished/steps.length*100)+'%';
+      $('plan-prev').disabled=planState.index===0;
+      $('plan-skip').disabled=complete;
+      $('plan-return').disabled=complete;
+    }
+    $('plan-steps').classList.toggle('active',running);
+    $('plan-steps').innerHTML=steps.map(([name,sets,reps,rest],i)=>{
+      const done=!!planState?.done[i],skipped=!!planState?.skipped.includes(i),current=running&&planState.index===i;
+      return `<button type="button" class="plan-step${done?' done':''}${current?' current':''}" data-plan-step="${i}" ${running?'':'disabled'} aria-current="${current?'step':'false'}"><span class="plan-number">${done?'✓':skipped?'↷':i+1}</span><span class="plan-main"><b>${esc(name)}</b><small>${sets} 组 × ${esc(reps)} 次 · 休息 ${esc(rest)}${skipped?' · 已跳过':''}</small></span>${current?'<span style="font-size:11px;color:#b6ffe0">当前</span>':''}</button>`;
+    }).join('');
+    const currentStep=running?steps[planState.index]:null;
+    if(!editing)$('save-button').textContent=currentStep&&selectedName===currentStep[0]&&getDay()===planState.day?'✓ 保存并下一步':'✓ 保存本次动作';
+  }
+  function loadPlanStep(){
+    if(!planState)return;
+    const plan=PLANS[planState.id],i=planState.index;
+    if(i>=plan.items.length){resetForm();renderPlan();return;}
+    const [name,numSets]=plan.items[i];
+    $('workout-day').value=planState.day;
+    switchMode('home',{clear:false});
+    setName(name);
+    const completed=planState.done[i]?records.find(r=>r.id===planState.done[i]):null;
+    const earlier=completed||bestRecent(name);
+    const weights=earlier&&!isCardio(earlier)?normalizedSets(earlier):[];
+    grid=Array.from({length:numSets},(_,j)=>mkSet(weights[j]?.kg??weights[0]?.kg??'',completed?(weights[j]?.reps??null):null));
+    if(completed){$('previous-hint').textContent='✓ 已完成过本项；再次保存会更新原记录，不会重复新增。';}
+    else{$('previous-hint').textContent='📋 按计划：'+numSets+' 组；已带入上次重量，次数已清空。';}
+    $('previous-hint').classList.add('loaded');
+    renderTable();renderPlan();
+  }
+  function startPlan(){
+    if(planState){switchPage('log');loadPlanStep();$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return;}
+    const id=$('plan-picker').value;
+    planState={id,day:getDay(),index:0,done:{},skipped:[]};
+    savePlan();loadPlanStep();renderPlan();
+    $('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
+    toast('开始 '+PLANS[id].title+' · 第 1 项 '+PLANS[id].items[0][0]);
+  }
+  function gotoPlanStep(i){
+    if(!planState)return;
+    if(!Number.isInteger(i)||i<0||i>=PLANS[planState.id].items.length)return;
+    planState.index=i;savePlan();loadPlanStep();
+    $('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  function skipPlanStep(){
+    if(!planState)return;
+    const i=planState.index,steps=PLANS[planState.id].items;
+    if(i>=steps.length)return;
+    if(!planState.done[i]&&!planState.skipped.includes(i))planState.skipped.push(i);
+    planState.index=nextPlanIndex(i+1);
+    savePlan();loadPlanStep();renderPlan();
+    toast('已跳过 '+steps[i][0]);
+  }
+  function endPlan(){
+    if(!planState)return;
+    const done=Object.keys(planState.done).length;
+    if(done<PLANS[planState.id].items.length&&!confirm('结束当前计划？已保存的训练记录会保留，但计划进度将清除。'))return;
+    planState=null;savePlan();resetForm();renderPlan();toast('计划已结束，训练记录已保留');
   }
   function makeRow(r){if(isCardio(r)){const stats=[r.durationMin!==''&&r.durationMin!=null?`${fmt(r.durationMin)} 分钟`:null,r.distanceKm!==''&&r.distanceKm!=null?`${fmt(r.distanceKm)} km`:null,r.resistance?`${r.resistance}`:null].filter(Boolean).join(' · ');
       return `<article class="item"><div class="itemmain"><div><div class="name">${esc(r.exercise)}<span class="meta-badge">有氧</span></div><div class="meta">${esc(r.equipment||'有氧器械')}</div></div><div class="numbers"><strong>${r.durationMin!==''&&r.durationMin!=null?fmt(r.durationMin):'—'}</strong> 分钟</div></div><div class="setsummary">${esc(stats)}</div>${r.notes?`<div class="rownotes">${esc(r.notes)}</div>`:''}${rowActions(r.id)}</article>`;
@@ -303,18 +475,25 @@
   function csvExport(){const header=['日期','类型','动作','器材类型','第几组','重量(kg)','次数','训练量(kg)','时长(分钟)','距离(km)','阻力/速度/坡度','备注'];const data=[header];
     for(const r of [...records].sort((a,b)=>a.day.localeCompare(b.day))){if(isCardio(r))data.push([r.day,'有氧',r.exercise,r.equipment,'','','','',r.durationMin,r.distanceKm,r.resistance||'',r.notes||'']);else for(const [i,s] of r.setsData.entries())data.push([r.day,'力量',r.exercise,r.equipment,i+1,s.kg,s.reps??'',s.reps!==null&&s.kg!==''?Number(s.kg)*s.reps:'','','','',r.notes||''])}
     const csv='\ufeff'+data.map(row=>row.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');download('健身记录_力量与有氧_'+today()+'.csv',csv,'text/csv;charset=utf-8');toast('CSV 已导出')}
-  function jsonExport(){download('健身速记_备份_'+today()+'.json',JSON.stringify({app:'PocketGym',version:3,exportedAt:new Date().toISOString(),records,favorites:[...favorites]},null,2),'application/json;charset=utf-8');toast('JSON 已备份（含收藏）')}
+  function jsonExport(){download('健身速记_备份_'+today()+'.json',JSON.stringify({app:'PocketGym',version:3,exportedAt:new Date().toISOString(),records,favorites:[...favorites],activePlan:planState},null,2),'application/json;charset=utf-8');toast('JSON 已备份（含收藏）')}
   async function importFile(e){const file=e.target.files?.[0];e.target.value='';if(!file)return;try{const obj=JSON.parse(await file.text()),incoming=Array.isArray(obj)?obj:obj.records;if(!Array.isArray(incoming)||!incoming.every(validRecord))throw Error('不是可识别的健身记录文件');if(!confirm(`导入 ${incoming.length} 条记录，与现有 ${records.length} 条合并？同 ID 记录以导入版本为准。`))return;
-      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
+      const map=new Map(records.map(r=>[r.id,r]));for(const r of incoming)map.set(r.id,{...norm(r),exercise:r.exercise.trim().slice(0,65),equipment:String(r.equipment||'其他').slice(0,70),notes:String(r.notes||'').slice(0,500)});records=[...map.values()];if(Array.isArray(obj.favorites)){favorites=new Set([...favorites,...obj.favorites.filter(x=>typeof x==='string').slice(0,250)]);saveFavorites()}if(validPlanState(obj.activePlan)){planState=obj.activePlan;savePlan();renderPlan()}persist();renderAll();toast('成功导入 '+incoming.length+' 条记录')}catch(err){alert('导入失败：'+(err.message||'文件无效'))}}
   function chooseAndLoad(name){const cardio=knownKind(name)==='cardio';if(cardio&&mode!=='cardio'&&mode!=='all')switchMode('cardio');else if(!cardio&&mode==='cardio')switchMode(HOME.has(name)?'home':'all');setName(name)}
   function rowAction(e){const b=e.target.closest('button[data-action]');if(!b)return;const id=b.dataset.id,action=b.dataset.action,r=records.find(r=>r.id===id);if(!r)return;
     if(action==='edit'){fillEdit(id);return}if(action==='repeat'){switchPage('log');$('workout-day').value=today();chooseAndLoad(r.exercise);$('form-panel').scrollIntoView({behavior:'smooth',block:'start'});return}
     if(action==='delete'){if(!confirm(`删除「${r.exercise}」这条训练（${r.day}），确定吗？`))return;records=records.filter(x=>x.id!==id);if(editing===id)resetForm();persist();renderAll();toast('已删除')}
   }
-  $('workout-day').value=today();redrawCatalogue();
+  $('workout-day').value=planState?.day||today();redrawCatalogue();
+  $('plan-picker').addEventListener('change',renderPlan);
+  $('plan-start').addEventListener('click',startPlan);
+  $('plan-prev').addEventListener('click',()=>{if(planState)gotoPlanStep(Math.max(0,planState.index-1))});
+  $('plan-skip').addEventListener('click',skipPlanStep);
+  $('plan-return').addEventListener('click',()=>{loadPlanStep();$('form-panel').scrollIntoView({behavior:'smooth',block:'start'})});
+  $('plan-end').addEventListener('click',endPlan);
+  $('plan-steps').addEventListener('click',e=>{const btn=e.target.closest('[data-plan-step]');if(btn&&planState)gotoPlanStep(Number(btn.dataset.planStep))});
   document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>switchMode(b.dataset.mode)));
   $('exercise-pick').addEventListener('change',()=>{const name=$('exercise-pick').value;if(name==='__custom__'){setName('');$('previous-hint').textContent='请输入新动作名称，或从历史记录中选择。';$('exercise').focus()}else setName(name)});
-  $('exercise').addEventListener('input',()=>{const name=$('exercise').value.trim();if(name===selectedName)return;if(!name){setName('');return}if(allNames().has(name))setName(name);else{selectedName=name;updatePicker(name);grid=mkDefault();setCardio(null);updateKind(mode==='cardio'?'cardio':'strength');$('previous-hint').textContent=kind==='cardio'?'新有氧项目：请输入时长或距离。':'新动作：默认 4 组。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');renderFavoriteToggle();renderTable()}});
+  $('exercise').addEventListener('input',()=>{const name=$('exercise').value.trim();if(name===selectedName)return;if(!name){setName('');return}if(allNames().has(name))setName(name);else{selectedName=name;updatePicker(name);grid=mkDefault();setCardio(null);updateKind(mode==='cardio'?'cardio':'strength');$('previous-hint').textContent=kind==='cardio'?'新有氧项目：请输入时长或距离。':'新动作：默认 4 组。';$('previous-hint').classList.remove('loaded');$('reload-previous').classList.add('hide');renderFavoriteToggle();renderTable();renderPlan()}});
   ['favorite-chips','recent-chips'].forEach(id=>$(id).addEventListener('click',e=>{const b=e.target.closest('[data-choice]');if(b)chooseAndLoad(b.dataset.choice)}));
   $('favorite-toggle').addEventListener('click',()=>{const name=$('exercise').value.trim();if(!name){toast('请先选择或输入动作');return}if(favorites.has(name)){favorites.delete(name);toast('已取消收藏')}else{favorites.add(name);toast('★ 已加入收藏')}selectedName=name;renderFavoriteToggle();saveFavorites();renderDatalist();renderChips()});
   $('reps-table').addEventListener('click',e=>{const del=e.target.closest('[data-delete-set]');if(del){if(grid.length<=1){toast('至少保留 1 组');return}grid.splice(Number(del.dataset.deleteSet),1);renderTable();return}const rep=e.target.closest('[data-rep-col]');if(rep){const i=Number(rep.dataset.repCol),n=Number(rep.dataset.repValue);grid[i].reps=grid[i].reps===n?null:n;renderTable()}});
@@ -324,12 +503,13 @@
   $('clear-reps').addEventListener('click',()=>{if(!grid.some(s=>s.reps!==null)){toast('次数已经是空的');return}grid.forEach(s=>s.reps=null);renderTable();toast('已清空次数，重量不变')});
   $('copy-weight').addEventListener('click',()=>{if(grid[0].kg===''||!Number.isFinite(+grid[0].kg)){toast('请先填写第 1 组重量');return}grid.forEach(s=>s.kg=grid[0].kg);renderTable();toast('已复制首组重量')});
   $('reload-previous').addEventListener('click',()=>{const name=$('exercise').value.trim();if(!name)return;setName(name);toast('已重新载入上次数据')});
-  $('record-form').addEventListener('submit',saveRecord);$('cancel-button').addEventListener('click',resetForm);$('workout-day').addEventListener('change',renderDay);$('jump-today').addEventListener('click',()=>{$('workout-day').value=today();renderDay()});
+  $('record-form').addEventListener('submit',saveRecord);$('cancel-button').addEventListener('click',resetForm);$('workout-day').addEventListener('change',()=>{renderDay();renderPlan()});$('jump-today').addEventListener('click',()=>{$('workout-day').value=today();renderDay()});
   document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
   $('day-list').addEventListener('click',rowAction);$('history-list').addEventListener('click',rowAction);$('chart-exercise').addEventListener('change',renderChart);
   $('export-csv').addEventListener('click',csvExport);$('export-json').addEventListener('click',jsonExport);$('import-json').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',importFile);
   $('clear-all').addEventListener('click',()=>{if(!records.length){toast('没有可以清空的记录');return}if(!confirm(`将永久清空 ${records.length} 条训练记录。建议先备份 JSON。确定吗？`))return;records=[];persist();resetForm();renderAll();toast('已清空全部记录')});
-  switchMode('home');renderTable();renderAll();
+  switchMode('home');renderTable();renderAll();renderPlan();
+  if(planState&&planState.index<PLANS[planState.id].items.length)loadPlanStep();
   if('serviceWorker' in navigator&&location.protocol.startsWith('http'))window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
 })();
 </script>
