@@ -503,7 +503,7 @@
   $('clear-reps').addEventListener('click',()=>{if(!grid.some(s=>s.reps!==null)){toast('次数已经是空的');return}grid.forEach(s=>s.reps=null);renderTable();toast('已清空次数，重量不变')});
   $('copy-weight').addEventListener('click',()=>{if(grid[0].kg===''||!Number.isFinite(+grid[0].kg)){toast('请先填写第 1 组重量');return}grid.forEach(s=>s.kg=grid[0].kg);renderTable();toast('已复制首组重量')});
   $('reload-previous').addEventListener('click',()=>{const name=$('exercise').value.trim();if(!name)return;setName(name);toast('已重新载入上次数据')});
-  $('record-form').addEventListener('submit',saveRecord);$('cancel-button').addEventListener('click',resetForm);$('workout-day').addEventListener('change',()=>{renderDay();renderPlan()});$('jump-today').addEventListener('click',()=>{$('workout-day').value=today();renderDay()});
+  $('record-form').addEventListener('submit',saveRecord);$('cancel-button').addEventListener('click',resetForm);$('workout-day').addEventListener('change',()=>{renderDay();renderPlan()});$('jump-today').addEventListener('click',()=>{$('workout-day').value=today();renderDay();renderPlan()});
   document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>switchPage(b.dataset.page)));
   $('day-list').addEventListener('click',rowAction);$('history-list').addEventListener('click',rowAction);$('chart-exercise').addEventListener('change',renderChart);
   $('export-csv').addEventListener('click',csvExport);$('export-json').addEventListener('click',jsonExport);$('import-json').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',importFile);
