@@ -187,6 +187,7 @@
       background:var(--ios-subtle);border:1px solid var(--ios-divider);color:var(--text);border-radius:13px;
       font-weight:610;min-height:48px}
     .plan-picker select{padding:10px 12px;min-width:0}
+    .date{color-scheme:light}
     .plan-action,.primary,.quick-save button,.template-actions .primary{background:var(--mint);color:#fff;border:none;
       border-radius:14px;box-shadow:none;font-size:14px;letter-spacing:-.01em;font-weight:720;transition:filter .14s}
     .plan-action{min-height:48px;min-width:98px}
@@ -207,6 +208,7 @@
     .plan-step.current{background:var(--ios-accent-soft);border-color:var(--mint)}
     .plan-step.done{border-color:var(--ios-divider)}
     .plan-step .plan-number{background:var(--ios-subtle);color:var(--ios-muted)}
+    .plan-step .current-label{font-size:11px;color:var(--ios-tint);font-weight:680}
     .plan-step.done .plan-number{background:var(--mint);color:#fff}
     .plan-step b{color:var(--text);font-weight:690}
     .plan-step small,.plan-step.current small{color:var(--ios-muted)}
@@ -329,6 +331,7 @@
       .field input::placeholder,.field textarea::placeholder{color:#86868b}
       .weightbox::placeholder{color:#7d7d84}
       .toast{color:var(--text);background:#3a3a3c}
+      .date{color-scheme:dark}
       .nav{box-shadow:none}
       .quick-save{box-shadow:0 8px 23px #0007}
     }
@@ -605,7 +608,7 @@
     if(!['home','cardio','all'].includes(next))return;
     mode=next;
     document.querySelectorAll('[data-mode]').forEach(b=>{let active=b.dataset.mode===mode;b.classList.toggle('active',active);b.setAttribute('aria-selected',String(active))});
-    $('mode-description').textContent=mode==='home'?'🏠 已按实拍确认：腿屈伸／弯举、挂片硬拉、引体向上等均可选。':mode==='cardio'?'♥ 跑步机、自行车、划船机、爬楼机、椭圆机与 Concept2 SkiErg 均已确认。':'☷ 也包含其他健身房动作；独立高位下拉机、力量划船机尚未确认。';
+    $('mode-description').textContent=mode==='home'?'已按实拍确认：腿屈伸／弯举、挂片硬拉、引体向上等均可选。':mode==='cardio'?'跑步机、自行车、划船机、爬楼机、椭圆机与 Concept2 SkiErg 均已确认。':'也包含其他健身房动作；独立高位下拉机、力量划船机尚未确认。';
     if(clear)resetForm();
     redrawCatalogue();
     if(!selectedName)updateKind(mode==='cardio'?'cardio':'strength');
@@ -664,7 +667,7 @@
     resetForm();renderAll();
     if(planMatch){
       if(planState.index<plan.items.length){loadPlanStep();toast('✓ 已保存，进入下一动作：'+plan.items[planState.index][0]);}
-      else{renderPlan();toast('🎉 本次训练动作已全部处理完毕！');}
+      else{renderPlan();toast('本次训练动作已全部完成');}
       $('form-panel').scrollIntoView({behavior:'smooth',block:'start'});
     }
   }
@@ -694,7 +697,7 @@
     if(running){
       finished=steps.filter((_,i)=>planState.done[i]||planState.skipped.includes(i)).length;
       const complete=planState.index>=steps.length;
-      $('plan-progress-label').textContent=complete?'🎉 本轮训练已完成':`进行中 · ${finished}/${steps.length} 项`;
+      $('plan-progress-label').textContent=complete?'本轮训练已完成':`进行中 · ${finished}/${steps.length} 项`;
       $('plan-progress-detail').textContent=complete?'所有动作已保存或跳过。点击“结束本次计划”返回普通记录。':`当前：${steps[planState.index][0]} · ${steps[planState.index][1]} 组 × ${steps[planState.index][2]} 次`;
       $('plan-progress-bar').style.width=Math.round(finished/steps.length*100)+'%';
       $('plan-prev').disabled=planState.index===0;
@@ -705,7 +708,7 @@
     $('plan-step-count').textContent=steps.length;
     $('plan-steps').innerHTML=steps.map(([name,sets,reps,rest],i)=>{
       const done=!!planState?.done[i],skipped=!!planState?.skipped.includes(i),current=running&&planState.index===i;
-      return `<button type="button" class="plan-step${done?' done':''}${current?' current':''}" data-plan-step="${i}" ${running?'':'disabled'} aria-current="${current?'step':'false'}"><span class="plan-number">${done?'✓':skipped?'↷':i+1}</span><span class="plan-main"><b>${esc(name)}</b><small>${sets} 组 × ${esc(reps)} 次 · 休息 ${esc(rest)}${skipped?' · 已跳过':''}</small></span>${current?'<span style="font-size:11px;color:#b6ffe0">当前</span>':''}</button>`;
+      return `<button type="button" class="plan-step${done?' done':''}${current?' current':''}" data-plan-step="${i}" ${running?'':'disabled'} aria-current="${current?'step':'false'}"><span class="plan-number">${done?'✓':skipped?'↷':i+1}</span><span class="plan-main"><b>${esc(name)}</b><small>${sets} 组 × ${esc(reps)} 次 · 休息 ${esc(rest)}${skipped?' · 已跳过':''}</small></span>${current?'<span class="current-label">当前</span>':''}</button>`;
     }).join('');
     const step=running?steps[planState.index]:null;
     if(!editing)$('save-button').textContent=step&&selectedName===step[0]&&getDay()===planState.day?'✓ 保存并下一步':'✓ 保存本次动作';
@@ -801,8 +804,8 @@
     const earlier=completed||bestRecent(name);
     const weights=earlier&&!isCardio(earlier)?normalizedSets(earlier):[];
     grid=Array.from({length:numSets},(_,j)=>mkSet(weights[j]?.kg??weights[0]?.kg??'',completed?(weights[j]?.reps??null):null));
-    if(completed){$('previous-hint').textContent='✓ 已完成过本项；再次保存会更新原记录，不会重复新增。';}
-    else{$('previous-hint').textContent='📋 按计划：'+numSets+' 组；已带入上次重量，次数已清空。';}
+    if(completed){$('previous-hint').textContent='已完成过本项；再次保存会更新原记录，不会重复新增。';}
+    else{$('previous-hint').textContent='按计划：'+numSets+' 组；已带入上次重量，次数已清空。';}
     $('previous-hint').classList.add('loaded');
     renderTable();renderPlan();
   }
