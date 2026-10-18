@@ -71,6 +71,51 @@
       .table-scroll.fit-four .reptable{border-spacing:2px 3px}
     }
 
+
+    /* v3.4 compact mobile dashboard and progressive disclosure */
+    .app{padding-top:16px}.top{margin-bottom:11px}.brand .logo{width:39px;height:39px;border-radius:12px}.title{font-size:21px}
+    .panel{padding:15px;margin-bottom:10px;border-radius:17px}.panelhead{margin-bottom:9px}.panelhead p{font-size:11px}
+    .compact-details{border:1px solid #344a60;border-radius:14px;background:#172538;margin:8px 0 10px;overflow:hidden}
+    .compact-details>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-weight:760;font-size:13px;color:#dfeef9;min-height:45px}
+    .compact-details>summary::-webkit-details-marker{display:none}
+    .compact-details>summary::after{content:'⌄';margin-left:auto;color:#78e4bc;font-size:19px;line-height:1}
+    .compact-details[open]>summary::after{transform:rotate(180deg)}
+    .compact-details .detail-hint{color:#91abc1;font-weight:500;font-size:11px}
+    .compact-details .hero{padding:0 10px 9px;margin:0}.compact-details .hero>div{padding:9px 11px}.compact-details .stat{font-size:20px}
+    .stats-fold{border-color:#2c3d54;background:#111e2f;margin-top:0}
+    .step-fold{background:#102532;border-color:#3b655a;margin-top:10px}.step-fold .plan-steps{padding:0 9px 9px;margin:0}
+    .plan-panel{padding:13px}.plan-panel .panelhead p{display:none}
+    .plan-meta{margin:7px 0}.plan-active-summary{margin:8px 0;padding:9px}
+    .plan-footer{margin-top:7px}.plan-footer button{min-height:38px}.plan-footer .plan-end{margin-left:auto}
+    .template-fold{background:#122739;border-color:#355a57}
+    .template-editor{padding:0 12px 14px}.template-editor>.tiny{margin:2px 0 8px;line-height:1.6}
+    .template-editor-heading{display:flex;justify-content:space-between;align-items:center;margin:15px 0 8px}
+    .template-rows{display:grid;gap:10px}.template-row{border:1px solid #35516a;border-radius:12px;padding:10px;background:#0e1b2d}
+    .template-row-header{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:9px}.template-row-header strong{font-size:12px;min-width:0;overflow-wrap:anywhere}
+    .template-row-buttons{display:flex;gap:5px;flex-shrink:0}.template-row-buttons button{width:36px;height:36px;border-radius:9px;border:1px solid #435a72;color:#dceefa;background:#23364a;font-size:18px}
+    .template-row-buttons button:disabled{opacity:.28}.template-row-buttons button:last-child{color:#ffb4ba}
+    .template-name label,.template-numbers label{font-size:11px;color:#b6cadb;display:block}
+    .template-editor input,.template-editor select{width:100%;min-height:40px;background:#14253b;color:#edf7ff;border:1px solid #3b526c;border-radius:9px;padding:8px;font-size:13px}
+    .template-name input{margin-top:4px}.template-numbers{display:grid;grid-template-columns:55px 1fr 1fr;gap:7px;margin-top:8px}.template-numbers input{margin-top:4px}
+    .template-add{border:1px dashed #5d987f;background:#194138;color:#abffd9;border-radius:11px;padding:12px;width:100%;margin-top:10px}
+    .template-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:13px}.template-actions button{min-height:45px;font-size:12px}
+    .template-reset{margin-top:12px;border:0;background:none;color:#a9bdcf;text-decoration:underline;font-size:12px;padding:8px 3px}
+    .template-reset.danger{color:#ffacb2}
+    .manual-tools{background:#101c2b;border-color:#304159;margin:0 0 11px}
+    .manual-tools .modes{margin:4px 10px 10px}.manual-tools .modedesc{margin:0 10px 9px}
+    .manual-tools .chipslabel,.manual-tools .chips{margin-left:10px;margin-right:10px}
+    .manual-tools .twocol,.manual-tools .chosen-head{margin-left:10px;margin-right:10px}
+    .manual-tools .chosen-head{margin-bottom:12px}
+    .guided-form .manual-tools{border-style:dashed}.guided-form .manual-tools>summary{color:#b0c3d2}
+    .table-section{margin-top:9px}.table-help{border:0;background:transparent;margin:1px 0 7px}
+    .table-help>summary{min-height:28px;padding:3px 0;color:#98adbf;font-size:11px}
+    .table-help .table-guide{padding:0 2px 5px;margin:0}
+    .legend-fold{border:0;background:transparent;margin:5px 0 0}.legend-fold>summary{padding:3px 0;min-height:25px;color:#91a7b8;font-size:10px}
+    .legend-fold .table-legend{padding:0 5px 6px}
+    .summary{margin-top:8px;padding:8px 10px}.summary .small{display:none}
+    .day-fold{background:#142337;border-color:#2b4059}.day-fold>.panel{margin:0;border:0;border-top:1px solid #34495e;border-radius:0;box-shadow:none}
+    .foot{margin-top:6px}
+    @media(max-width:430px){.app{padding-left:11px;padding-right:11px}.panel{padding:12px}.template-numbers{grid-template-columns:50px 1fr 1fr}.compact-details>summary{padding:10px 12px}}
     /* Workout-guided mode: compact, touch-friendly, independent of legacy logs. */
     .plan-panel{border-color:#326657;background:linear-gradient(160deg,#173a36,#162033 58%)}
     .plan-panel .panelhead{margin-bottom:9px}
